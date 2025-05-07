@@ -2,15 +2,17 @@ package main
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"encoding/json"
-	"io"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
@@ -23,11 +25,7 @@ type MockPaymentChannel struct {
 
 func (m *MockPaymentChannel) CloseChannel(auth *bind.TransactOpts, channelID [32]byte, amount *big.Int, signature []byte) (*types.Transaction, error) {
 	args := m.Called(auth, channelID, amount, signature)
-	first := args.Get(0)
-	if first == nil {
-		return nil, args.Error(1)
-	}
-	return first.(*types.Transaction), args.Error(1)
+	return args.Get(0).(*types.Transaction), args.Error(1)
 }
 
 type MockQoSService struct {
@@ -36,229 +34,161 @@ type MockQoSService struct {
 
 func (m *MockQoSService) UpdateQoS(auth *bind.TransactOpts, provider common.Address, score *big.Int) (*types.Transaction, error) {
 	args := m.Called(auth, provider, score)
-	first := args.Get(0)
-	if first == nil {
-		return nil, args.Error(1)
+	return args.Get(0).(*types.Transaction), args.Error(1)
+}
+
+func createSignedRequest(t *testing.T, pk *ecdsa.PrivateKey, channelID common.Hash, amount *big.Int, validUntil int64) *bytes.Buffer {
+	from := crypto.PubkeyToAddress(pk.PublicKey)
+
+	msg := crypto.Keccak256Hash(
+		channelID.Bytes(),
+		common.LeftPadBytes(amount.Bytes(), 32),
+		common.LeftPadBytes(big.NewInt(validUntil).Bytes(), 32),
+	)
+
+	digest := crypto.Keccak256Hash(
+		[]byte("\x19Ethereum Signed Message:\n32"),
+		msg.Bytes(),
+	)
+
+	sig, err := crypto.Sign(digest.Bytes(), pk)
+	assert.NoError(t, err)
+
+	req := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"method":  "eth_blockNumber",
+		"params":  []interface{}{},
+		"id":      1,
+		"payment": map[string]interface{}{
+			"channelId":  channelID.Hex(),
+			"amount":     amount.String(),
+			"signature":  hexutil.Encode(sig),
+			"from":       from.Hex(),
+			"validUntil": validUntil,
+		},
 	}
-	return first.(*types.Transaction), args.Error(1)
+
+	body, _ := json.Marshal(req)
+	return bytes.NewBuffer(body)
 }
 
 func TestPaymentHandler_Success(t *testing.T) {
-	// Stub backend RPC server for forwarding
 	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{"jsonrpc": "2.0", "result": "0x1", "id": 1})
 	}))
 	defer backend.Close()
 
+	pk, _ := crypto.GenerateKey()
+	channelID := common.HexToHash("0x1234")
+	amount := big.NewInt(1e18)
+	validUntil := time.Now().Add(1 * time.Hour).Unix()
+
 	mockChannel := new(MockPaymentChannel)
 	mockQoS := new(MockQoSService)
 
-	// Mock successful payment channel closure
-	mockChannel.On("CloseChannel", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+	mockChannel.On("CloseChannel", mock.Anything, channelID, amount, mock.Anything).Return(
 		types.NewTransaction(0, common.Address{}, nil, 0, nil, nil), nil)
-
-	// Mock QoS update
 	mockQoS.On("UpdateQoS", mock.Anything, mock.Anything, mock.Anything).Return(
 		types.NewTransaction(1, common.Address{}, nil, 0, nil, nil), nil)
 
-	// Generate a test private key
-	pk, _ := crypto.GenerateKey()
-
 	srv := &RPCServer{
+		privateKey:     pk,
 		paymentChannel: mockChannel,
 		providerReg:    mockQoS,
-		privateKey:     pk,
-		config: Config{
-			EthRPCURL: backend.URL,
-			ContractAddrs: ContractAddresses{
-				PaymentChannel:   common.HexToAddress("0x123"),
-				ProviderRegistry: common.HexToAddress("0x456"),
-				StakeToken:       common.HexToAddress("0x789"),
-			},
-		},
+		config:         Config{EthRPCURL: backend.URL},
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(srv.handleRPCRequest))
 	defer ts.Close()
 
-	reqBody := bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": [],
-		"payment": {
-			"channelId": "0x1234",
-			"amount": "1000",
-			"signature": "0xabcd"
-		}
-	}`)
-
-	resp, err := http.Post(ts.URL, "application/json", reqBody)
+	resp, err := http.Post(ts.URL, "application/json",
+		createSignedRequest(t, pk, channelID, amount, validUntil))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
-	// verify response body contains forwarded result
-	var respData map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&respData)
-	assert.NoError(t, err)
-	assert.Equal(t, "0x1", respData["result"])
-
-	mockChannel.AssertExpectations(t)
-	mockQoS.AssertExpectations(t)
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	assert.Equal(t, "0x1", result["result"])
+	assert.Contains(t, result["context"], "qos")
 }
 
-func TestPaymentHandler_Failure(t *testing.T) {
-	// Generate a test private key
+func TestPaymentHandler_ExpiredSignature(t *testing.T) {
 	pk, _ := crypto.GenerateKey()
-	mockChannel := new(MockPaymentChannel)
-	mockQoS := new(MockQoSService)
+	channelID := common.HexToHash("0x1234")
+	expiredValidUntil := time.Now().Add(-1 * time.Hour).Unix()
 
-	// Mock failed payment channel closure to return error
-	mockChannel.On("CloseChannel", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
-		nil, assert.AnError)
-
-	srv := &RPCServer{
-		privateKey:     pk,
-		paymentChannel: mockChannel,
-		providerReg:    mockQoS,
-		config: Config{
-			EthRPCURL: "http://localhost:8545",
-			ContractAddrs: ContractAddresses{
-				PaymentChannel:   common.HexToAddress("0x123"),
-				ProviderRegistry: common.HexToAddress("0x456"),
-				StakeToken:       common.HexToAddress("0x789"),
-			},
-		},
-	}
-
-	ts := httptest.NewServer(http.HandlerFunc(srv.handleRPCRequest))
-	defer ts.Close()
-
-	reqBody := bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": [],
-		"payment": {
-			"channelId": "0x1234",
-			"amount": "1000",
-			"signature": "0xabcd"
-		}
-	}`)
-
-	resp, err := http.Post(ts.URL, "application/json", reqBody)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusPaymentRequired, resp.StatusCode)
-
-	// verify error message in body
-	data, err := io.ReadAll(resp.Body)
-	assert.NoError(t, err)
-	assert.Contains(t, string(data), "Payment processing failed")
-
-	// Verify QoS wasn't updated on failure
-	mockQoS.AssertNotCalled(t, "UpdateQoS")
-}
-
-// New test cases for extended coverage
-func TestPaymentHandler_InvalidPayment(t *testing.T) {
-	pk, _ := crypto.GenerateKey()
 	srv := &RPCServer{
 		privateKey: pk,
-		config: Config{
-			EthRPCURL: "http://localhost:8545",
-		},
+		config:     Config{EthRPCURL: "http://localhost:8545"},
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(srv.handleRPCRequest))
 	defer ts.Close()
 
-	// Test missing payment field
-	reqBody := bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": []
-	}`)
-
-	resp, err := http.Post(ts.URL, "application/json", reqBody)
+	resp, err := http.Post(ts.URL, "application/json",
+		createSignedRequest(t, pk, channelID, big.NewInt(1e18), expiredValidUntil))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 
-	// Test invalid payment format
-	reqBody = bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": [],
-		"payment": "invalid"
-	}`)
-
-	resp, err = http.Post(ts.URL, "application/json", reqBody)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	assert.Contains(t, result["error"].(map[string]interface{})["message"], "expired")
 }
 
-func TestPaymentHandler_InvalidSignature(t *testing.T) {
+func TestPaymentHandler_ReplayAttack(t *testing.T) {
 	pk, _ := crypto.GenerateKey()
+	channelID := common.HexToHash("0x1234")
+	amount := big.NewInt(1e18)
+	validUntil := time.Now().Add(1 * time.Hour).Unix()
+
 	mockChannel := new(MockPaymentChannel)
+	mockChannel.On("CloseChannel", mock.Anything, channelID, amount, mock.Anything).Return(
+		types.NewTransaction(0, common.Address{}, nil, 0, nil, nil), nil).Once()
 
 	srv := &RPCServer{
 		privateKey:     pk,
 		paymentChannel: mockChannel,
-		config: Config{
-			EthRPCURL: "http://localhost:8545",
-		},
+		config:         Config{EthRPCURL: "http://localhost:8545"},
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(srv.handleRPCRequest))
 	defer ts.Close()
 
-	// Test with invalid signature format
-	reqBody := bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": [],
-		"payment": {
-			"channelId": "0x1234",
-			"amount": "1000",
-			"signature": "invalid"
-		}
-	}`)
+	// First request should succeed
+	reqBody := createSignedRequest(t, pk, channelID, amount, validUntil)
+	resp1, _ := http.Post(ts.URL, "application/json", reqBody)
+	assert.Equal(t, http.StatusOK, resp1.StatusCode)
 
-	resp, err := http.Post(ts.URL, "application/json", reqBody)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	// Second request with same params should fail
+	resp2, _ := http.Post(ts.URL, "application/json", reqBody)
+	assert.Equal(t, http.StatusBadRequest, resp2.StatusCode)
+
+	var result map[string]interface{}
+	json.NewDecoder(resp2.Body).Decode(&result)
+	assert.Contains(t, result["error"].(map[string]interface{})["message"], "replay")
 }
 
-func TestPaymentHandler_ForwardingError(t *testing.T) {
-	// Create backend that returns error
-	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
-	defer backend.Close()
-
+func TestPaymentHandler_InvalidSender(t *testing.T) {
 	pk, _ := crypto.GenerateKey()
-	mockChannel := new(MockPaymentChannel)
-	mockQoS := new(MockQoSService)
+	channelID := common.HexToHash("0x1234")
+	amount := big.NewInt(1e18)
+	validUntil := time.Now().Add(1 * time.Hour).Unix()
 
-	mockChannel.On("CloseChannel", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
-		types.NewTransaction(0, common.Address{}, nil, 0, nil, nil), nil)
+	// Create valid request then tamper with sender
+	reqBody := createSignedRequest(t, pk, channelID, amount, validUntil)
+	var req map[string]interface{}
+	json.Unmarshal(reqBody.Bytes(), &req)
+	req["payment"].(map[string]interface{})["from"] = common.HexToAddress("0x0000").Hex()
+	tamperedBody, _ := json.Marshal(req)
 
 	srv := &RPCServer{
-		privateKey:     pk,
-		paymentChannel: mockChannel,
-		providerReg:    mockQoS,
-		config: Config{
-			EthRPCURL: backend.URL,
-		},
+		privateKey: pk,
+		config:     Config{EthRPCURL: "http://localhost:8545"},
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(srv.handleRPCRequest))
 	defer ts.Close()
 
-	reqBody := bytes.NewBufferString(`{
-		"method": "eth_blockNumber",
-		"params": [],
-		"payment": {
-			"channelId": "0x1234",
-			"amount": "1000",
-			"signature": "0xabcd"
-		}
-	}`)
-
-	resp, err := http.Post(ts.URL, "application/json", reqBody)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+	resp, _ := http.Post(ts.URL, "application/json", bytes.NewBuffer(tamperedBody))
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }

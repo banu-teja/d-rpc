@@ -33,10 +33,10 @@ contract ProviderRegistryTest is Test {
         vm.startPrank(providerAddr);
         token.approve(address(reg), 200 ether);
         reg.depositStake(200 ether);
-        (uint256 s,,) = reg.providers(providerAddr);
-        assertEq(s, 200 ether);
+        (uint256 stake, , , , ) = reg.providers(providerAddr);
+        assertEq(stake, 200 ether);
         reg.register();
-        (, , bool isRegistered) = reg.providers(providerAddr);
+        (, , bool isRegistered, , ) = reg.providers(providerAddr);
         assertTrue(isRegistered);
         vm.stopPrank();
     }
@@ -67,8 +67,8 @@ contract ProviderRegistryTest is Test {
 
         vm.prank(owner);
         reg.slashProvider(providerAddr, 50 ether);
-        (uint256 s2,,) = reg.providers(providerAddr);
-        assertEq(s2, minStake - 50 ether);
+        (uint256 newStake, , , , ) = reg.providers(providerAddr);
+        assertEq(newStake, minStake - 50 ether);
         assertEq(token.balanceOf(owner), 50 ether);
     }
 
@@ -81,7 +81,7 @@ contract ProviderRegistryTest is Test {
 
         vm.prank(owner);
         reg.updateQoS(providerAddr, 42);
-        (, uint256 score, ) = reg.providers(providerAddr);
+        (, uint256 score, , , ) = reg.providers(providerAddr);
         assertEq(score, 42);
     }
 }
