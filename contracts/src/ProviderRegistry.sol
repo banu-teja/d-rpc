@@ -16,9 +16,18 @@ contract ProviderRegistry is Ownable, ReentrancyGuard {
         bool registered;
         uint40 registrationTime;
         uint40 deregistrationTime;
-    }
+        string rpcUrl;
+
+    // TODO: Implement reward distribution logic based on usage and/or QoS
+    // This function would calculate and distribute rewards to providers
+    // based on collected metrics over a period.
+    // function distributeRewards() external onlyOwner {
+    //     // Distribution logic here
+    // }
+}
 
     mapping(address => Provider) public providers;
+    address[] public registeredProviderAddresses; // Array to keep track of registered provider addresses
 
     event ProviderRegistered(address indexed provider, uint256 stake);
     event ProviderDeregistered(address indexed provider);
@@ -45,19 +54,42 @@ contract ProviderRegistry is Ownable, ReentrancyGuard {
         emit StakeDeposited(msg.sender, amount);
     }
 
-    function register() external nonReentrant {
+    function register(string calldata rpcUrl) external nonReentrant {
         Provider storage p = providers[msg.sender];
         require(!p.registered, "Already registered");
         require(p.stake >= minStake, "Insufficient stake");
         require(block.timestamp > p.deregistrationTime + DEREGISTRATION_COOLDOWN, "Cooldown active");
         p.registered = true;
         p.registrationTime = uint40(block.timestamp);
+        p.rpcUrl = rpcUrl;
         emit ProviderRegistered(msg.sender, p.stake);
+
+        // Add provider address to the list if not already present (should not be if not registered)
+        bool found = false;
+        for (uint i = 0; i < registeredProviderAddresses.length; i++) {
+            if (registeredProviderAddresses[i] == msg.sender) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            registeredProviderAddresses.push(msg.sender);
+        }
     }
 
     function deregister() external nonReentrant {
         Provider storage p = providers[msg.sender];
         require(p.registered, "Not registered");
+
+        // Remove provider address from the list
+        for (uint i = 0; i < registeredProviderAddresses.length; i++) {
+            if (registeredProviderAddresses[i] == msg.sender) {
+                registeredProviderAddresses[i] = registeredProviderAddresses[registeredProviderAddresses.length - 1];
+                registeredProviderAddresses.pop();
+                break;
+            }
+        }
+
         p.registered = false;
         p.deregistrationTime = uint40(block.timestamp);
         emit ProviderDeregistered(msg.sender);
@@ -84,6 +116,17 @@ contract ProviderRegistry is Ownable, ReentrancyGuard {
     function updateQoS(address provider_, uint256 score) external onlyOwner nonReentrant {
         Provider storage p = providers[provider_];
         require(p.registered, "Provider not registered");
+        p.qosScore = score;
+        emit QoSUpdated(provider_, score);
+    }
+
+    // Function to get the list of registered provider addresses
+    function getRegisteredProviders() external view returns (address[] memory) {
+        return registeredProviderAddresses;
+    }
+}
+
+```
         p.qosScore = score;
         emit QoSUpdated(provider_, score);
     }

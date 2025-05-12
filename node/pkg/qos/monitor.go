@@ -35,10 +35,11 @@ type QoSMonitor struct {
 	updateInterval   time.Duration
 	metricsWindow    time.Duration
 	maxMetricsStored int
+	loadBalancer     *loadbalancer.LoadBalancer // Add LoadBalancer field
 }
 
 // NewMonitor creates a new QoS monitor
-func NewMonitor(registry *contracts.ProviderRegistry, client *ethclient.Client, privateKey string) *QoSMonitor {
+func NewMonitor(registry *contracts.ProviderRegistry, client *ethclient.Client, privateKey string, lb *loadbalancer.LoadBalancer) *QoSMonitor {
 	return &QoSMonitor{
 		registry:         registry,
 		client:           client,
@@ -99,7 +100,18 @@ func (q *QoSMonitor) RecordMetric(provider common.Address, responseTime time.Dur
 		}
 	}
 	q.metrics[provider] = newMetrics
+
+	// TODO: Implement persistent storage of metrics in a database.
+	// Store the metric (provider, responseTime, success, timestamp) in the database.
 }
+
+// TODO: Implement fetching historical uptime data from a database.
+// This function would query the database for uptime records for a given provider
+// over a specified time period and return a metric (e.g., uptime percentage).
+// func (q *QoSMonitor) getHistoricalUptime(provider common.Address, duration time.Duration) (float64, error) {
+//     // Database query logic here
+//     return 0.0, nil // Placeholder return
+// }
 
 // GetScoreForProvider calculates a QoS score for a specific provider
 func (q *QoSMonitor) GetScoreForProvider(provider common.Address) *big.Int {
@@ -143,7 +155,37 @@ func (q *QoSMonitor) GetScoreForProvider(provider common.Address) *big.Int {
 	// Combined score (weighted 70% success rate, 30% response time)
 	score := 0.7*successRate + 0.3*responseTimeScore
 
-	return big.NewInt(int64(score))
+	// Get provider info from load balancer to include uptime
+	var consecutiveFailures int
+	q.loadBalancer.mu.RLock() // Lock LoadBalancer's mutex
+	lbProvider, exists := q.loadBalancer.providers[provider]
+	if exists {
+		consecutiveFailures = lbProvider.ConsecutiveFailures
+		// Check if provider is currently considered 'down' by the load balancer
+		if lbProvider.UpSince.IsZero() && lbProvider.ConsecutiveFailures > q.loadBalancer.failureThreshold {
+			// Provider is down, return a very low score
+			log.Printf("Provider %s is down, returning low QoS score", provider.Hex())
+			return big.NewInt(1) // Return a minimal score
+		}
+	}
+	q.loadBalancer.mu.RUnlock() // Unlock LoadBalancer's mutex
+
+
+	// TODO: Fetch historical uptime data for the provider from the database using getHistoricalUptime.
+	// For example:
+	// historicalUptime, err := q.getHistoricalUptime(provider, 7 * 24 * time.Hour) // Last 7 days
+	// if err == nil && historicalUptime < 0.9 { // Example: penalize if uptime is less than 90%
+	//     squeezedScore = max(0, squeezedScore - 20) // Apply a penalty
+	// }
+
+	// Adjust score based on consecutive failures (if not marked as fully down)
+	if consecutiveFailures > 0 {
+		// Simple linear penalty: 10 points per failure
+		penalty := float64(consecutiveFailures * 10)
+		squeezedScore = max(0, score - penalty) // Ensure score doesn't go below 0
+	}
+
+	return big.NewInt(int64(squeezedScore))
 }
 
 // updateScores calculates and updates the QoS scores for all providers
@@ -166,6 +208,9 @@ func (q *QoSMonitor) updateScores(ctx context.Context) {
 		if err != nil {
 			continue // Skip this update if auth fails
 		}
+
+		// TODO: Implement persistent storage of the calculated QoS score.
+		// Store the provider's address, the calculated score, and a timestamp in the database.
 
 		// Update the QoS score on-chain
 		_, err = q.registry.UpdateQoS(auth, provider, score)

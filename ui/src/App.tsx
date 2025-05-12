@@ -159,10 +159,21 @@ function App() {
     }
   }
 
+
   return (
     <div className="app">
+      {/* TODO: Implement Node Operator Dashboard section here. */}
+      {/* This section would include UI for: */}
+      {/* - Registering a node (input for RPC URL, button to trigger registration). */}
+      {/* - Staking tokens: */}
+      {/*   - Input for stake amount. */}
+      {/*   - Button to approve StakeToken spending by ProviderRegistry. */}
+      {/*   - Button to call depositStake on ProviderRegistry. */}
+      {/* - Monitoring node performance and earnings: */}
+      {/*   - Display metrics like latency, success rate, and uptime. */}
+      {/*   - Display earnings (tokens received) over different periods. */}
+
       <header>
-        <h1>Decentralized RPC Network</h1>
         <p>A network of incentivized RPC providers</p>
 
         <nav className="main-nav">

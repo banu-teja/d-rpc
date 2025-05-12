@@ -3,6 +3,7 @@ package loadbalancer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"math/big"
 	"math/rand"
@@ -25,6 +26,7 @@ type Provider struct {
 	LastUpdate time.Time
 	Latency    time.Duration
 	UpSince    time.Time
+	ConsecutiveFailures int // Track consecutive health check failures
 }
 
 // LoadBalancer manages RPC providers and selects them based on QoS
@@ -35,6 +37,7 @@ type LoadBalancer struct {
 	mu          sync.RWMutex
 	updateEvery time.Duration
 	lastUpdate  time.Time
+	failureThreshold int // Consecutive health check failures threshold
 }
 
 // New creates a new LoadBalancer instance
@@ -49,6 +52,7 @@ func New(registryAddr common.Address, client *ethclient.Client) (*LoadBalancer, 
 		client:      client,
 		providers:   make(map[common.Address]*Provider),
 		updateEvery: 1 * time.Minute, // More frequent updates for testing
+		failureThreshold: 3, // Default consecutive failure threshold
 	}
 
 	// Initial providers load
@@ -77,6 +81,40 @@ func (lb *LoadBalancer) refreshLoop(ctx context.Context) {
 				// Make sure we always have test providers if real ones fail
 				lb.addTestProviders()
 			}
+
+			// Implement ping/health check system here.
+			// Iterate through providers and check their RPC endpoint health and latency.
+			lb.mu.Lock()
+			// Note: In a real implementation, you would fetch RPC URLs for providers
+			// from a reliable source (e.g., a database or the ProviderRegistry if it stored URLs).
+			// Implement ping/health check system here.
+			// Iterate through providers and check their RPC endpoint health and latency.
+			lb.mu.Lock()
+			// Note: In a real implementation, the list of providers should be fetched
+			// from the ProviderRegistry contract's registered providers.
+			
+			// For now, iterating through the providers currently in the load balancer's map.
+			for addr, provider := range lb.providers {
+				
+				latency, healthy := lb.checkProviderHealth(ctx, addr)
+				
+				if healthy {
+					provider.Latency = latency
+					provider.ConsecutiveFailures = 0 // Reset failures on success
+					if provider.UpSince.IsZero() {
+						provider.UpSince = time.Now()
+					}
+				} else {
+					provider.ConsecutiveFailures++ // Increment failures on failure
+					// Mark provider as down after a configurable threshold of failures
+					if provider.ConsecutiveFailures > lb.failureThreshold {
+						provider.UpSince = time.Time{} // Indicate not currently up
+						log.Printf("Provider %s marked as down after %d failures", addr.Hex(), provider.ConsecutiveFailures)
+					}
+				}
+			}
+			lb.mu.Unlock()
+
 		case <-ctx.Done():
 			return
 		}
@@ -126,61 +164,55 @@ func (lb *LoadBalancer) addTestProviders() {
 
 // updateProviders refreshes the list of active providers from the registry
 func (lb *LoadBalancer) updateProviders(ctx context.Context) error {
-	// Try to fetch real providers from the blockchain
-	// This is a simplified implementation that would be enhanced
-	// in a production system with event filtering and pagination
-
-	// Add our test providers for development
-	lb.addTestProviders()
-
 	lb.mu.Lock()
 	defer lb.mu.Unlock()
 
-	// In a production implementation, we would iterate through
-	// "ProviderRegistered" events to discover all providers
-	// Then query their QoS scores and other metrics
+	// Clear current providers
+	lb.providers = make(map[common.Address]*Provider)
 
-	// For now we're using the test providers added in addTestProviders
+	// Fetch the list of registered provider addresses from the contract
+	registeredAddrs, err := lb.registry.GetRegisteredProviders(&bind.CallOpts{Context: ctx})
+	if err != nil {
+		return fmt.Errorf("error fetching registered providers from contract: %w", err)
+	}
 
-	// Simulate periodic updates to QoS scores to make UI more dynamic
-	for _, provider := range lb.providers {
-		// Randomly adjust QoS score slightly up or down
-		adjustment := rand.Intn(5)
-		if rand.Intn(2) == 0 {
-			adjustment = -adjustment
+	// Fetch details for each registered provider
+	for _, addr := range registeredAddrs {
+		providerInfo, err := lb.registry.Providers(&bind.CallOpts{Context: ctx}, addr)
+		if err != nil {
+			log.Printf("Error fetching provider info for %s from contract: %v", addr.Hex(), err)
+			continue // Skip this provider if we can't fetch details
 		}
 
-		newScore := new(big.Int).Add(provider.QoSScore, big.NewInt(int64(adjustment)))
-
-		// Keep scores in a reasonable range
-		if newScore.Cmp(big.NewInt(100)) > 0 {
-			newScore = big.NewInt(100)
-		}
-		if newScore.Cmp(big.NewInt(40)) < 0 {
-			newScore = big.NewInt(40)
-		}
-
-		provider.QoSScore = newScore
-		provider.LastUpdate = time.Now()
-
-		// Also update latency - simulate some variation
-		latencyAdjustment := time.Duration(rand.Intn(20)) * time.Millisecond
-		if rand.Intn(2) == 0 {
-			provider.Latency += latencyAdjustment
-		} else {
-			if provider.Latency > latencyAdjustment {
-				provider.Latency -= latencyAdjustment
+		// Only add if actually registered (double check)
+		if providerInfo.Registered {
+			// Check if provider already exists in map to preserve state like ConsecutiveFailures
+			existingProvider, exists := lb.providers[addr]
+			if exists {
+				// Update existing provider info
+				existingProvider.QoSScore = providerInfo.QosScore
+				existingProvider.Stake = providerInfo.Stake
+				existingProvider.LastUpdate = time.Now()
+				log.Printf("Updated registered provider: %s", addr.Hex())
+			} else {
+				// Add new provider
+				lb.providers[addr] = &Provider{
+					Address:    addr,
+					QoSScore:   providerInfo.QosScore,
+					Stake:      providerInfo.Stake,
+					LastUpdate: time.Now(),
+					Latency:    0, // Will be updated by health check
+					UpSince:    time.Time{}, // Will be updated by health check
+					ConsecutiveFailures: 0,
+				}
+				log.Printf("Added new registered provider: %s with RPC URL: %s", addr.Hex(), providerInfo.rpcUrl)
 			}
 		}
-
-		// Keep latency in reasonable range
-		if provider.Latency < 30*time.Millisecond {
-			provider.Latency = 30 * time.Millisecond
-		}
-		if provider.Latency > 500*time.Millisecond {
-			provider.Latency = 500 * time.Millisecond
-		}
 	}
+
+	// Note: This implementation does not handle providers that have deregistered
+	// since the last update. A more robust solution would compare the list from the
+	// contract with the current providers in the map and remove deregistered ones.
 
 	lb.lastUpdate = time.Now()
 	return nil
@@ -210,6 +242,40 @@ func (lb *LoadBalancer) AddProvider(addr common.Address) error {
 	}
 
 	return nil
+}
+
+// checkProviderHealth performs a health check on a provider's RPC endpoint
+func (lb *LoadBalancer) checkProviderHealth(ctx context.Context, providerAddr common.Address) (time.Duration, bool) {
+	// Fetch the provider's RPC URL from the registry
+	providerInfo, err := lb.registry.Providers(&bind.CallOpts{Context: ctx}, providerAddr)
+	if err != nil || !providerInfo.Registered {
+		log.Printf("Could not fetch registered provider info for %s or provider not registered: %v", providerAddr.Hex(), err)
+		return 0, false
+	}
+
+	rpcURL := providerInfo.rpcUrl
+	if rpcURL == "" {
+		log.Printf("RPC URL is empty for provider %s", providerAddr.Hex())
+		return 0, false
+	}
+
+	start := time.Now()
+	client, err := ethclient.DialContext(ctx, rpcURL)
+	if err != nil {
+		log.Printf("Health check failed for %s (%s): %v", providerAddr.Hex(), rpcURL, err)
+		return 0, false
+	}
+	defer client.Close()
+
+	// Perform a simple RPC call, e.g., get the latest block number
+	_, err = client.BlockNumber(ctx)
+	if err != nil {
+		log.Printf("Health check failed for %s (%s): %v", providerAddr.Hex(), rpcURL, err)
+		return 0, false
+	}
+
+	latency := time.Since(start)
+	return latency, true
 }
 
 // GetProvider selects a provider using weighted random selection based on QoS

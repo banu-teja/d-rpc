@@ -17,6 +17,8 @@ import (
 	"bytes"
 	"sync"
 
+	"golang.org/x/time/rate"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -82,7 +84,54 @@ type RPCServer struct {
 	usedNonces     map[[32]byte]*big.Int
 	qosMonitor     *qos.QoSMonitor
 	loadBalancer   *loadbalancer.LoadBalancer
+	rateLimiters   map[string]*rate.Limiter // In-memory rate limiters by IP
+	muRateLimiters sync.Mutex
+	clientCreditManager *ClientCreditManager // Placeholder for client credit management
+	billingProcessor *BillingProcessor // Placeholder for billing processing
 }
+
+// BillingProcessor is a placeholder for processing billing and interacting with smart contracts
+type BillingProcessor struct {
+	// TODO: Add fields for database connection, smart contract instances, etc.
+	// Example: db *sql.DB
+	// registry *contracts.ProviderRegistry
+}
+
+// TODO: Add methods to BillingProcessor for calculating bills, triggering payments, etc.
+// Example:
+// func (p *BillingProcessor) ProcessMetricsAndBillClients() error { ... }
+
+
+// ClientCreditManager is a placeholder for managing client credits
+type ClientCreditManager struct {
+	// TODO: Add fields for database connection or smart contract interaction
+	// Example: db *sql.DB
+
+	// TODO: Clients can top up credits by transferring StakeToken to a designated contract or address.
+}
+
+// TODO: Add methods to ClientCreditManager for checking balance, deducting credits, topping up, etc.
+
+// CheckBalance is a placeholder function to check if a client has sufficient balance
+func (m *ClientCreditManager) CheckBalance(clientAddr common.Address, requiredAmount *big.Int) (bool, error) {
+	// TODO: Implement actual balance checking logic (database or smart contract interaction).
+	// Return true if clientAddr has requiredAmount or more, false otherwise.
+	// Return an error if there was a problem checking the balance.
+
+	log.Printf("Placeholder CheckBalance called for client %s, required amount %s", clientAddr.Hex(), requiredAmount.String())
+	return true, nil // Placeholder: always return true for now
+}
+
+// DeductCredits is a placeholder function to deduct credits from a client's balance
+func (m *ClientCreditManager) DeductCredits(clientAddr common.Address, amount *big.Int) error {
+	// TODO: Implement actual credit deduction logic (database or smart contract interaction).
+	// Return an error if deduction fails (e.g., insufficient balance, database error).
+
+	log.Printf("Placeholder DeductCredits called for client %s, amount %s", clientAddr.Hex(), amount.String())
+	return nil // Placeholder: always succeed for now
+}
+
+// TODO: Add other methods (e.g., TopUpCredits)
 
 func main() {
 	cfg := loadConfig()
@@ -111,10 +160,17 @@ func main() {
 	qosMonitor := qos.NewMonitor(providerReg, client, cfg.PrivateKey)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	go qosMonitor.Start(ctx)
-
 	// Initialize load balancer
 	lb, err := loadbalancer.New(cfg.ContractAddrs.ProviderRegistry, client)
+	if err != nil {
+		log.Fatalf("Failed to initialize load balancer: %v", err)
+	}
+
+	// Initialize QoS monitor
+	qosMonitor := qos.NewMonitor(providerReg, client, cfg.PrivateKey, lb)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go qosMonitor.Start(ctx)
 	if err != nil {
 		log.Fatalf("Failed to initialize load balancer: %v", err)
 	}
@@ -128,6 +184,7 @@ func main() {
 		usedNonces:     make(map[[32]byte]*big.Int),
 		qosMonitor:     qosMonitor,
 		loadBalancer:   lb,
+		rateLimiters:   make(map[string]*rate.Limiter),
 	}
 
 	if os.Getenv("SKIP_PROVIDER_REGISTRATION") != "" {
@@ -141,7 +198,126 @@ func main() {
 		}
 	}
 
+	// Start background reward distribution process
+	go rpcServer.startRewardDistribution(ctx)
+
+	// Start background provider behavior monitoring process
+	go rpcServer.monitorProviderBehavior(ctx)
+
+	// Start background billing processing process
+	go rpcServer.startBillingProcessing(ctx)
+
 	rpcServer.startHTTPServer()
+}
+
+// startBillingProcessing is a background process for processing billing
+func (s *RPCServer) startBillingProcessing(ctx context.Context) {
+	// TODO: Implement billing processing logic here.
+	// This process should periodically process collected metrics,
+	// calculate bills for clients based on usage, and potentially
+	// interact with smart contracts for settlement or reconciliation.
+
+	ticker := time.NewTicker(24 * time.Hour) // Example: process billing daily
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			log.Println("Starting billing processing...")
+			// TODO: Implement metric processing, billing calculation, and smart contract interaction.
+			log.Println("Billing processing finished.")
+		case <-ctx.Done():
+			log.Println("Billing processing process stopped.")
+			return
+		}
+	}
+}
+
+// startRewardDistribution is a background process for distributing rewards
+func (s *RPCServer) startRewardDistribution(ctx context.Context) {
+	// TODO: Implement reward distribution logic here.
+	// This process should periodically calculate rewards based on QoS and usage
+	// metrics and trigger transactions to the smart contract.
+
+	ticker := time.NewTicker(24 * time.Hour) // Example: distribute rewards daily
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			log.Println("Starting reward distribution...")
+
+			// TODO: Aggregate usage data per provider from persistent storage (database).
+			// This would involve querying the database for metrics within the current reward period
+			// and calculating the total usage (e.g., number of requests, total data transferred) per provider.
+
+			// TODO: Implement reward calculation based on aggregated usage and QoS scores.
+			// Retrieve latest QoS scores from the QoS monitor or persistent storage.
+			// Apply the defined reward formula.
+
+			// TODO: Implement smart contract interaction to distribute calculated rewards.
+			// Call a function on the ProviderRegistry.sol or a dedicated reward contract
+			// to transfer the reward tokens to each provider.
+
+			log.Println("Reward distribution finished.")
+		case <-ctx.Done():
+			log.Println("Reward distribution process stopped.")
+			return
+		}
+	}
+}
+
+// monitorProviderBehavior is a background process for detecting malicious or incorrect provider behavior
+func (s *RPCServer) monitorProviderBehavior(ctx context.Context) {
+	// TODO: Implement off-chain detection logic here based on defined slashing criteria.
+	// This could involve:
+	// - Analyzing performance metrics from the QoS monitor.
+	// - Verifying response correctness (if decentralized verification is implemented).
+	// - Processing reports of misbehavior.
+
+	// Example: Periodically check providers for prolonged downtime
+	ticker := time.NewTicker(5 * time.Minute) // Example: check every 5 minutes
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			log.Println("Running provider behavior monitoring...")
+			// TODO: Implement detection logic here.
+			// If malicious behavior is detected based on defined criteria:
+			// detectedMisbehavingProvider := common.HexToAddress("...") // Example
+			// amountToSlash := big.NewInt(...
+			// if err := s.triggerSlashing(ctx, detectedMisbehavingProvider, amountToSlash); err != nil {
+			//	log.Printf("Error triggering slashing for %s: %v", detectedMisbehavingProvider.Hex(), err)
+			// }
+			log.Println("Provider behavior monitoring finished.")
+		case <-ctx.Done():
+			log.Println("Provider behavior monitoring process stopped.")
+			return
+		}
+	}
+}
+
+// triggerSlashing initiates a transaction to slash a provider on the smart contract
+func (s *RPCServer) triggerSlashing(ctx context.Context, providerAddr common.Address, slashAmount *big.Int) error {
+	log.Printf("Attempting to slash provider %s for amount %s", providerAddr.Hex(), slashAmount.String())
+
+	// TODO: Implement smart contract interaction to call slashProvider on ProviderRegistry.sol
+	// This will require creating an authorized transactor and sending the transaction.
+
+	// Example (commented out):
+	// auth, err := bind.NewKeyedTransactorWithChainID(s.privateKey, big.NewInt(31337)) // Replace with actual chain ID
+	// if err != nil {
+	//	return fmt.Errorf("failed to create transactor: %w", err)
+	// }
+	//
+	// _, err = s.registry.SlashProvider(auth, providerAddr, slashAmount)
+	// if err != nil {
+	//	return fmt.Errorf("failed to send slash transaction: %w", err)
+	// }
+
+	log.Printf("Slashing transaction for provider %s initiated (TODO: verify transaction status)", providerAddr.Hex())
+	return nil // Placeholder return
 }
 
 func loadConfig() Config {
@@ -225,6 +401,7 @@ func (s *RPCServer) startHTTPServer() {
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
 	r.Use(corsMiddleware)
+	r.Use(s.rateLimitMiddleware)
 	r.HandleFunc("/", s.handleRPCRequest).Methods("POST")
 
 	// Add discovery endpoint
@@ -255,6 +432,40 @@ func (s *RPCServer) startHTTPServer() {
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Incoming request: %s %s from %s", r.Method, r.RequestURI, r.RemoteAddr)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// rateLimitMiddleware implements basic IP-based rate limiting
+func (s *RPCServer) rateLimitMiddleware(next http.Handler) http.Handler {
+	// Define the rate limit: 10 requests per second, with a burst of 20
+	limiter := rate.NewLimiter(rate.Limit(10), 20)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Get client IP address
+		ip, _, err := strings.Cut(r.RemoteAddr, ":")
+		if err != nil {
+			log.Printf("Error getting client IP: %v", err)
+			respondWithError(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		s.muRateLimiters.Lock()
+		clientLimiter, exists := s.rateLimiters[ip]
+		if !exists {
+			// Create a new limiter for this IP
+			clientLimiter = rate.NewLimiter(rate.Limit(10), 20)
+			s.rateLimiters[ip] = clientLimiter
+		}
+		s.muRateLimiters.Unlock()
+
+		// Allow or deny the request
+		if !clientLimiter.Allow() {
+			log.Printf("Rate limit exceeded for IP: %s", ip)
+			respondWithError(w, "Too many requests", http.StatusTooManyRequests)
+			return
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
@@ -372,6 +583,28 @@ func (s *RPCServer) handleRPCRequest(w http.ResponseWriter, r *http.Request) {
 		paymentSuccess = true
 	}
 
+	// TODO: Implement interaction with a more comprehensive client credit management system here.
+	// This could involve checking client balance and deducting cost per request using the clientCreditManager.
+	// Example:
+	// clientAddress := common.HexToAddress(req.Payment.From) // Or derive client address from authentication
+	// requiredCost := big.NewInt(...) // Determine cost based on request type and size
+	// hasBalance, err := s.clientCreditManager.CheckBalance(clientAddress, requiredCost)
+	// if err != nil || !hasBalance {
+	//	respondWithError(w, "Insufficient credits or error checking balance", http.StatusPaymentRequired)
+	//	return
+	// }
+	// if err := s.clientCreditManager.DeductCredits(clientAddress, requiredCost); err != nil {
+	//	log.Printf("Error deducting credits for client %s: %v", clientAddress.Hex(), err)
+	//	respondWithError(w, "Internal server error", http.StatusInternalServerError)
+	//	return
+	// }
+
+	// TODO: Implement off-chain detection logic for malicious/incorrect responses here.
+	// This could involve verifying the response content based on defined criteria.
+
+	// TODO: Implement off-chain triggering logic to call the slashProvider function
+	// on the ProviderRegistry.sol contract if malicious behavior is detected.
+
 	// Forward the request to the blockchain node
 	proxyReq, err := http.NewRequest("POST", s.config.EthRPCURL, bytes.NewBuffer([]byte(buildRPCRequest(req))))
 	if err != nil {
@@ -437,28 +670,40 @@ func (s *RPCServer) handleDiscovery(w http.ResponseWriter, r *http.Request) {
 	// Convert to response format
 	response := struct {
 		Providers []struct {
-			Address  string `json:"address"`
-			QoSScore string `json:"qosScore"`
-			Stake    string `json:"stake"`
+			Address             string `json:"address"`
+			QoSScore            string `json:"qosScore"`
+			Stake               string `json:"stake"`
+			UpSince             int64  `json:"upSince"` // Unix timestamp
+			ConsecutiveFailures int    `json:"consecutiveFailures"`
 		} `json:"providers"`
 		RecommendedProvider string `json:"recommendedProvider"`
 	}{
 		Providers: make([]struct {
-			Address  string `json:"address"`
-			QoSScore string `json:"qosScore"`
-			Stake    string `json:"stake"`
+			Address             string `json:"address"`
+			QoSScore            string `json:"qosScore"`
+			Stake               string `json:"stake"`
+			UpSince             int64  `json:"upSince"`
+			ConsecutiveFailures int    `json:"consecutiveFailures"`
 		}, 0, len(providers)),
 	}
 
 	for _, p := range providers {
+		upSinceUnix := int64(0)
+		if !p.UpSince.IsZero() {
+			upSinceUnix = p.UpSince.Unix()
+		}
 		response.Providers = append(response.Providers, struct {
-			Address  string `json:"address"`
-			QoSScore string `json:"qosScore"`
-			Stake    string `json:"stake"`
+			Address             string `json:"address"`
+			QoSScore            string `json:"qosScore"`
+			Stake               string `json:"stake"`
+			UpSince             int64  `json:"upSince"`
+			ConsecutiveFailures int    `json:"consecutiveFailures"`
 		}{
 			Address:  p.Address.Hex(),
 			QoSScore: p.QoSScore.String(),
 			Stake:    p.Stake.String(),
+			UpSince: upSinceUnix,
+			ConsecutiveFailures: p.ConsecutiveFailures,
 		})
 	}
 
