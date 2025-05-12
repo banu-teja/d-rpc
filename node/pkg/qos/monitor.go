@@ -28,6 +28,7 @@ type QoSMonitor struct {
 	registry   *contracts.ProviderRegistry
 	client     *ethclient.Client
 	privateKey string
+	chainID    *big.Int // Added: Chain ID for transactions
 	metrics    map[common.Address][]Metric
 	mu         sync.RWMutex
 
@@ -37,15 +38,16 @@ type QoSMonitor struct {
 	maxMetricsStored int
 }
 
+
 // NewMonitor creates a new QoS monitor
-func NewMonitor(registry *contracts.ProviderRegistry, client *ethclient.Client, privateKey string) *QoSMonitor {
+func NewMonitor(registry *contracts.ProviderRegistry, client *ethclient.Client, privateKey string, chainID *big.Int) *QoSMonitor {
 	return &QoSMonitor{
 		registry:         registry,
 		client:           client,
 		privateKey:       privateKey,
+		chainID:          chainID, // Store chain ID
 		metrics:          make(map[common.Address][]Metric),
 		updateInterval:   30 * time.Minute,
-		metricsWindow:    24 * time.Hour,
 		maxMetricsStored: 1000,
 	}
 }
@@ -159,11 +161,14 @@ func (q *QoSMonitor) updateScores(ctx context.Context) {
 		score := q.GetScoreForProvider(provider)
 
 		// Create an authorized transactor
-		auth, err := bind.NewKeyedTransactorWithChainID(
-			parsePrivateKey(q.privateKey),
-			big.NewInt(31337), // Replace with actual chain ID
-		)
+		pk := parsePrivateKey(q.privateKey)
+		if pk == nil {
+		    // log.Printf("Error parsing private key for QoS update, skipping provider %s", provider.Hex())
+		    continue
+		}
+		auth, err := bind.NewKeyedTransactorWithChainID(pk, q.chainID) // Use configured chain ID
 		if err != nil {
+		    // log.Printf("Error creating transactor for QoS update for provider %s: %v", provider.Hex(), err)
 			continue // Skip this update if auth fails
 		}
 

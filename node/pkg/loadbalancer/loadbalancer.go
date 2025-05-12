@@ -25,6 +25,7 @@ type Provider struct {
 	LastUpdate time.Time
 	Latency    time.Duration
 	UpSince    time.Time
+	EndpointURL string // Added: RPC Endpoint URL
 }
 
 // LoadBalancer manages RPC providers and selects them based on QoS
@@ -48,14 +49,20 @@ func New(registryAddr common.Address, client *ethclient.Client) (*LoadBalancer, 
 		registry:    registry,
 		client:      client,
 		providers:   make(map[common.Address]*Provider),
-		updateEvery: 1 * time.Minute, // More frequent updates for testing
+		updateEvery: 5 * time.Minute, // Check for updates less frequently now
 	}
 
 	// Initial providers load
-	if err := lb.updateProviders(context.Background()); err != nil {
-		log.Printf("Warning: initial provider update failed: %v", err)
-		// Continue anyway with test providers
+	// Use a separate context for initial load, might take longer
+	ctxInitial, cancelInitial := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancelInitial()
+	if err := lb.updateProviders(ctxInitial); err != nil {
+		log.Printf("Warning: initial provider update failed: %v. Falling back to test providers.", err)
+		// Fallback to test providers if initial load fails
 		lb.addTestProviders()
+	} else if len(lb.providers) == 0 {
+		log.Printf("Warning: No registered providers found. Adding test providers.")
+		lb.addTestProviders() // Also add test providers if none found
 	}
 
 	// Start background refresh
@@ -118,71 +125,85 @@ func (lb *LoadBalancer) addTestProviders() {
 			LastUpdate: time.Now(),
 			Latency:    time.Duration(50+i*25) * time.Millisecond,
 			UpSince:    time.Now().Add(-time.Duration(24*(i+1)) * time.Hour),
+			// Add placeholder URL for test providers, assuming they run on sequential ports
+			EndpointURL: fmt.Sprintf("http://localhost:854%d", 5+i), 
 		}
 	}
 
 	lb.lastUpdate = time.Now()
 }
 
-// updateProviders refreshes the list of active providers from the registry
+// updateProviders refreshes the list of active providers from the registry.
+// NOTE: This implementation re-queries known providers. A more scalable approach
+// would use event watching (e.g., WatchProviderRegistered) to incrementally update.
 func (lb *LoadBalancer) updateProviders(ctx context.Context) error {
-	// Try to fetch real providers from the blockchain
-	// This is a simplified implementation that would be enhanced
-	// in a production system with event filtering and pagination
-
-	// Add our test providers for development
-	lb.addTestProviders()
-
+	log.Println("Updating provider list...")
 	lb.mu.Lock()
 	defer lb.mu.Unlock()
 
-	// In a production implementation, we would iterate through
-	// "ProviderRegistered" events to discover all providers
-	// Then query their QoS scores and other metrics
+	// Create a temporary list of current provider addresses
+	currentAddrs := make([]common.Address, 0, len(lb.providers))
+	for addr := range lb.providers {
+		currentAddrs = append(currentAddrs, addr)
+	}
 
-	// For now we're using the test providers added in addTestProviders
+	// In a real system, we'd need a discovery mechanism for *new* providers.
+	// For now, we just refresh the state of known providers.
+	// A simple discovery could involve querying logs for ProviderRegistered events
+	// within a recent block range, but this is omitted for brevity here.
 
-	// Simulate periodic updates to QoS scores to make UI more dynamic
-	for _, provider := range lb.providers {
-		// Randomly adjust QoS score slightly up or down
-		adjustment := rand.Intn(5)
-		if rand.Intn(2) == 0 {
-			adjustment = -adjustment
+	// Refresh state for existing providers
+	updatedProviders := make(map[common.Address]*Provider)
+	for _, addr := range currentAddrs {
+		providerData, err := lb.registry.Providers(&bind.CallOpts{Context: ctx}, addr)
+		if err != nil {
+			// If provider data can't be fetched, assume it's deregistered or contract issue
+			log.Printf("Error fetching provider data for %s: %v. Removing from active list.", addr.Hex(), err)
+			continue // Skip this provider
 		}
 
-		newScore := new(big.Int).Add(provider.QoSScore, big.NewInt(int64(adjustment)))
-
-		// Keep scores in a reasonable range
-		if newScore.Cmp(big.NewInt(100)) > 0 {
-			newScore = big.NewInt(100)
+		// Check if provider is still registered
+		if !providerData.Registered {
+			log.Printf("Provider %s is no longer registered. Removing from active list.", addr.Hex())
+			continue // Skip unregistered provider
 		}
-		if newScore.Cmp(big.NewInt(40)) < 0 {
-			newScore = big.NewInt(40)
+		if providerData.EndpointURL == "" {
+			log.Printf("Provider %s has no endpoint URL set. Skipping.", addr.Hex())
+			continue // Skip provider without URL
 		}
 
-		provider.QoSScore = newScore
-		provider.LastUpdate = time.Now()
-
-		// Also update latency - simulate some variation
-		latencyAdjustment := time.Duration(rand.Intn(20)) * time.Millisecond
-		if rand.Intn(2) == 0 {
-			provider.Latency += latencyAdjustment
+		// Update or keep existing provider entry
+		existingProvider, exists := lb.providers[addr]
+		if exists {
+			// Update fields from contract
+			existingProvider.QoSScore = providerData.QosScore
+			existingProvider.Stake = providerData.Stake
+			existingProvider.EndpointURL = providerData.EndpointURL
+			existingProvider.LastUpdate = time.Now() // Mark as updated
+			// Keep existing Latency/UpSince unless we implement active health checks
+			updatedProviders[addr] = existingProvider
 		} else {
-			if provider.Latency > latencyAdjustment {
-				provider.Latency -= latencyAdjustment
+			// This case shouldn't be hit with the current logic, but handles discovery if added
+			updatedProviders[addr] = &Provider{
+				Address:    addr,
+				QoSScore:   providerData.QosScore,
+				Stake:      providerData.Stake,
+				LastUpdate: time.Now(),
+				Latency:    100 * time.Millisecond, // Default latency for new provider
+				UpSince:    time.Now(),           // Assume up since discovery
+				EndpointURL: providerData.EndpointURL,
 			}
-		}
-
-		// Keep latency in reasonable range
-		if provider.Latency < 30*time.Millisecond {
-			provider.Latency = 30 * time.Millisecond
-		}
-		if provider.Latency > 500*time.Millisecond {
-			provider.Latency = 500 * time.Millisecond
 		}
 	}
 
+	// Replace the old map with the updated one
+	lb.providers = updatedProviders
 	lb.lastUpdate = time.Now()
+
+	log.Printf("Provider list update complete. Active providers: %d", len(lb.providers))
+
+	// TODO: Implement event watching for ProviderRegistered, ProviderDeregistered, 
+	//       ProviderURLUpdated, QoSUpdated for more efficient updates.
 	return nil
 }
 
@@ -205,9 +226,10 @@ func (lb *LoadBalancer) AddProvider(addr common.Address) error {
 		QoSScore:   provider.QosScore,
 		Stake:      provider.Stake,
 		LastUpdate: time.Now(),
-		Latency:    100 * time.Millisecond, // Default latency
-		UpSince:    time.Now(),
-	}
+			Latency:    100 * time.Millisecond, // Default latency
+			UpSince:    time.Now(),
+			EndpointURL: provider.EndpointURL, // Store the fetched URL (Requires updated Go bindings)
+		}
 
 	return nil
 }

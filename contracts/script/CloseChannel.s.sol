@@ -17,9 +17,10 @@ contract CloseChannel is Script {
         // Read channel ID from environment
         bytes32 channelId = vm.envBytes32("CHANNEL_ID");
         uint256 payout = 5 ether;
+        uint256 validUntil = block.timestamp + 1 hours;
 
         // Off-chain signing by user
-        bytes32 message = keccak256(abi.encodePacked(channelId, payout));
+        bytes32 message = keccak256(abi.encodePacked(channelId, payout, validUntil)); // Added validUntil
         // Ethereum Signed Message prefix to match personal_sign
         bytes32 digest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", message));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(userKey, digest);
@@ -30,14 +31,15 @@ contract CloseChannel is Script {
         // Debug: print broadcasting address
         console.log("Broadcasting as:", vm.addr(vm.envUint("FORGE_PRIVATE_KEY")));
 
-        // Provider closes the channel
-        channel.closeChannel(channelId, payout, sig);
-        console.log("Channel closed for payout:", payout);
 
+        // Provider closes the channel
+        channel.closeChannel(channelId, payout, validUntil, sig); // Added validUntil
+        console.log("Channel closed for payout:", payout);
         // Log final balances
         address provider = msg.sender;
         // Destructure channels mapping return values to get user
-        (, address user, , , , ) = channel.channels(channelId);
+        // user, provider, token, deposit, expiration, open, nonce
+        (, address user, , , , , ) = channel.channels(channelId);
         console.log("Provider balance:", token.balanceOf(provider));
         console.log("User balance:", token.balanceOf(user));
 

@@ -29,113 +29,113 @@ var (
 	_ = abi.ConvertType
 )
 
-// ProviderRegistryMetaData contains all meta data concerning the ProviderRegistry contract.
-var ProviderRegistryMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_stakeToken\",\"type\":\"address\",\"internalType\":\"contractIERC20\"},{\"name\":\"_minStake\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"depositStake\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deregister\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"minStake\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"providers\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"stake\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"qosScore\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"registered\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"register\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setMinStake\",\"inputs\":[{\"name\":\"_minStake\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"slashProvider\",\"inputs\":[{\"name\":\"provider_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"stakeToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateQoS\",\"inputs\":[{\"name\":\"provider_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"score\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"withdrawStake\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderDeregistered\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderRegistered\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"stake\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderSlashed\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"QoSUpdated\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newScore\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"StakeDeposited\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"StakeWithdrawn\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]}]",
+// ContractsMetaData contains all meta data concerning the Contracts contract.
+var ContractsMetaData = &bind.MetaData{
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"_stakeToken\",\"type\":\"address\",\"internalType\":\"contractIERC20\"},{\"name\":\"_minStake\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"DEREGISTRATION_COOLDOWN\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"depositStake\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"deregister\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"minStake\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"owner\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"providers\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"stake\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"qosScore\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"registered\",\"type\":\"bool\",\"internalType\":\"bool\"},{\"name\":\"registrationTime\",\"type\":\"uint40\",\"internalType\":\"uint40\"},{\"name\":\"deregistrationTime\",\"type\":\"uint40\",\"internalType\":\"uint40\"},{\"name\":\"endpointURL\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"register\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceOwnership\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setEndpointURL\",\"inputs\":[{\"name\":\"_url\",\"type\":\"string\",\"internalType\":\"string\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setMinStake\",\"inputs\":[{\"name\":\"_minStake\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"slashProvider\",\"inputs\":[{\"name\":\"provider_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"stakeToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"transferOwnership\",\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateQoS\",\"inputs\":[{\"name\":\"provider_\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"score\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"withdrawStake\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"inputs\":[{\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderDeregistered\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderRegistered\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"stake\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"endpointURL\",\"type\":\"string\",\"indexed\":false,\"internalType\":\"string\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderSlashed\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ProviderURLUpdated\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newURL\",\"type\":\"string\",\"indexed\":false,\"internalType\":\"string\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"QoSUpdated\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newScore\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"StakeDeposited\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"StakeWithdrawn\",\"inputs\":[{\"name\":\"provider\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"OwnableInvalidOwner\",\"inputs\":[{\"name\":\"owner\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]}]",
 }
 
-// ProviderRegistryABI is the input ABI used to generate the binding from.
-// Deprecated: Use ProviderRegistryMetaData.ABI instead.
-var ProviderRegistryABI = ProviderRegistryMetaData.ABI
+// ContractsABI is the input ABI used to generate the binding from.
+// Deprecated: Use ContractsMetaData.ABI instead.
+var ContractsABI = ContractsMetaData.ABI
 
-// ProviderRegistry is an auto generated Go binding around an Ethereum contract.
-type ProviderRegistry struct {
-	ProviderRegistryCaller     // Read-only binding to the contract
-	ProviderRegistryTransactor // Write-only binding to the contract
-	ProviderRegistryFilterer   // Log filterer for contract events
+// Contracts is an auto generated Go binding around an Ethereum contract.
+type Contracts struct {
+	ContractsCaller     // Read-only binding to the contract
+	ContractsTransactor // Write-only binding to the contract
+	ContractsFilterer   // Log filterer for contract events
 }
 
-// ProviderRegistryCaller is an auto generated read-only Go binding around an Ethereum contract.
-type ProviderRegistryCaller struct {
+// ContractsCaller is an auto generated read-only Go binding around an Ethereum contract.
+type ContractsCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ProviderRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type ProviderRegistryTransactor struct {
+// ContractsTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type ContractsTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ProviderRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type ProviderRegistryFilterer struct {
+// ContractsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type ContractsFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ProviderRegistrySession is an auto generated Go binding around an Ethereum contract,
+// ContractsSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type ProviderRegistrySession struct {
-	Contract     *ProviderRegistry // Generic contract binding to set the session for
+type ContractsSession struct {
+	Contract     *Contracts        // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ProviderRegistryCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ContractsCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type ProviderRegistryCallerSession struct {
-	Contract *ProviderRegistryCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts           // Call options to use throughout this session
+type ContractsCallerSession struct {
+	Contract *ContractsCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts    // Call options to use throughout this session
 }
 
-// ProviderRegistryTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ContractsTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type ProviderRegistryTransactorSession struct {
-	Contract     *ProviderRegistryTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
+type ContractsTransactorSession struct {
+	Contract     *ContractsTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts    // Transaction auth options to use throughout this session
 }
 
-// ProviderRegistryRaw is an auto generated low-level Go binding around an Ethereum contract.
-type ProviderRegistryRaw struct {
-	Contract *ProviderRegistry // Generic contract binding to access the raw methods on
+// ContractsRaw is an auto generated low-level Go binding around an Ethereum contract.
+type ContractsRaw struct {
+	Contract *Contracts // Generic contract binding to access the raw methods on
 }
 
-// ProviderRegistryCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type ProviderRegistryCallerRaw struct {
-	Contract *ProviderRegistryCaller // Generic read-only contract binding to access the raw methods on
+// ContractsCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type ContractsCallerRaw struct {
+	Contract *ContractsCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ProviderRegistryTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type ProviderRegistryTransactorRaw struct {
-	Contract *ProviderRegistryTransactor // Generic write-only contract binding to access the raw methods on
+// ContractsTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type ContractsTransactorRaw struct {
+	Contract *ContractsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewProviderRegistry creates a new instance of ProviderRegistry, bound to a specific deployed contract.
-func NewProviderRegistry(address common.Address, backend bind.ContractBackend) (*ProviderRegistry, error) {
-	contract, err := bindProviderRegistry(address, backend, backend, backend)
+// NewContracts creates a new instance of Contracts, bound to a specific deployed contract.
+func NewContracts(address common.Address, backend bind.ContractBackend) (*Contracts, error) {
+	contract, err := bindContracts(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistry{ProviderRegistryCaller: ProviderRegistryCaller{contract: contract}, ProviderRegistryTransactor: ProviderRegistryTransactor{contract: contract}, ProviderRegistryFilterer: ProviderRegistryFilterer{contract: contract}}, nil
+	return &Contracts{ContractsCaller: ContractsCaller{contract: contract}, ContractsTransactor: ContractsTransactor{contract: contract}, ContractsFilterer: ContractsFilterer{contract: contract}}, nil
 }
 
-// NewProviderRegistryCaller creates a new read-only instance of ProviderRegistry, bound to a specific deployed contract.
-func NewProviderRegistryCaller(address common.Address, caller bind.ContractCaller) (*ProviderRegistryCaller, error) {
-	contract, err := bindProviderRegistry(address, caller, nil, nil)
+// NewContractsCaller creates a new read-only instance of Contracts, bound to a specific deployed contract.
+func NewContractsCaller(address common.Address, caller bind.ContractCaller) (*ContractsCaller, error) {
+	contract, err := bindContracts(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryCaller{contract: contract}, nil
+	return &ContractsCaller{contract: contract}, nil
 }
 
-// NewProviderRegistryTransactor creates a new write-only instance of ProviderRegistry, bound to a specific deployed contract.
-func NewProviderRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*ProviderRegistryTransactor, error) {
-	contract, err := bindProviderRegistry(address, nil, transactor, nil)
+// NewContractsTransactor creates a new write-only instance of Contracts, bound to a specific deployed contract.
+func NewContractsTransactor(address common.Address, transactor bind.ContractTransactor) (*ContractsTransactor, error) {
+	contract, err := bindContracts(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryTransactor{contract: contract}, nil
+	return &ContractsTransactor{contract: contract}, nil
 }
 
-// NewProviderRegistryFilterer creates a new log filterer instance of ProviderRegistry, bound to a specific deployed contract.
-func NewProviderRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*ProviderRegistryFilterer, error) {
-	contract, err := bindProviderRegistry(address, nil, nil, filterer)
+// NewContractsFilterer creates a new log filterer instance of Contracts, bound to a specific deployed contract.
+func NewContractsFilterer(address common.Address, filterer bind.ContractFilterer) (*ContractsFilterer, error) {
+	contract, err := bindContracts(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryFilterer{contract: contract}, nil
+	return &ContractsFilterer{contract: contract}, nil
 }
 
-// bindProviderRegistry binds a generic wrapper to an already deployed contract.
-func bindProviderRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := ProviderRegistryMetaData.GetAbi()
+// bindContracts binds a generic wrapper to an already deployed contract.
+func bindContracts(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := ContractsMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -146,46 +146,77 @@ func bindProviderRegistry(address common.Address, caller bind.ContractCaller, tr
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ProviderRegistry *ProviderRegistryRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _ProviderRegistry.Contract.ProviderRegistryCaller.contract.Call(opts, result, method, params...)
+func (_Contracts *ContractsRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Contracts.Contract.ContractsCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ProviderRegistry *ProviderRegistryRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.ProviderRegistryTransactor.contract.Transfer(opts)
+func (_Contracts *ContractsRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Contracts.Contract.ContractsTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ProviderRegistry *ProviderRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.ProviderRegistryTransactor.contract.Transact(opts, method, params...)
+func (_Contracts *ContractsRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Contracts.Contract.ContractsTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ProviderRegistry *ProviderRegistryCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _ProviderRegistry.Contract.contract.Call(opts, result, method, params...)
+func (_Contracts *ContractsCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _Contracts.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ProviderRegistry *ProviderRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.contract.Transfer(opts)
+func (_Contracts *ContractsTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Contracts.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ProviderRegistry *ProviderRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.contract.Transact(opts, method, params...)
+func (_Contracts *ContractsTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Contracts.Contract.contract.Transact(opts, method, params...)
+}
+
+// DEREGISTRATIONCOOLDOWN is a free data retrieval call binding the contract method 0x2de6211b.
+//
+// Solidity: function DEREGISTRATION_COOLDOWN() view returns(uint256)
+func (_Contracts *ContractsCaller) DEREGISTRATIONCOOLDOWN(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _Contracts.contract.Call(opts, &out, "DEREGISTRATION_COOLDOWN")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// DEREGISTRATIONCOOLDOWN is a free data retrieval call binding the contract method 0x2de6211b.
+//
+// Solidity: function DEREGISTRATION_COOLDOWN() view returns(uint256)
+func (_Contracts *ContractsSession) DEREGISTRATIONCOOLDOWN() (*big.Int, error) {
+	return _Contracts.Contract.DEREGISTRATIONCOOLDOWN(&_Contracts.CallOpts)
+}
+
+// DEREGISTRATIONCOOLDOWN is a free data retrieval call binding the contract method 0x2de6211b.
+//
+// Solidity: function DEREGISTRATION_COOLDOWN() view returns(uint256)
+func (_Contracts *ContractsCallerSession) DEREGISTRATIONCOOLDOWN() (*big.Int, error) {
+	return _Contracts.Contract.DEREGISTRATIONCOOLDOWN(&_Contracts.CallOpts)
 }
 
 // MinStake is a free data retrieval call binding the contract method 0x375b3c0a.
 //
 // Solidity: function minStake() view returns(uint256)
-func (_ProviderRegistry *ProviderRegistryCaller) MinStake(opts *bind.CallOpts) (*big.Int, error) {
+func (_Contracts *ContractsCaller) MinStake(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _ProviderRegistry.contract.Call(opts, &out, "minStake")
+	err := _Contracts.contract.Call(opts, &out, "minStake")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -200,23 +231,23 @@ func (_ProviderRegistry *ProviderRegistryCaller) MinStake(opts *bind.CallOpts) (
 // MinStake is a free data retrieval call binding the contract method 0x375b3c0a.
 //
 // Solidity: function minStake() view returns(uint256)
-func (_ProviderRegistry *ProviderRegistrySession) MinStake() (*big.Int, error) {
-	return _ProviderRegistry.Contract.MinStake(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsSession) MinStake() (*big.Int, error) {
+	return _Contracts.Contract.MinStake(&_Contracts.CallOpts)
 }
 
 // MinStake is a free data retrieval call binding the contract method 0x375b3c0a.
 //
 // Solidity: function minStake() view returns(uint256)
-func (_ProviderRegistry *ProviderRegistryCallerSession) MinStake() (*big.Int, error) {
-	return _ProviderRegistry.Contract.MinStake(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsCallerSession) MinStake() (*big.Int, error) {
+	return _Contracts.Contract.MinStake(&_Contracts.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_ProviderRegistry *ProviderRegistryCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+func (_Contracts *ContractsCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _ProviderRegistry.contract.Call(opts, &out, "owner")
+	err := _Contracts.contract.Call(opts, &out, "owner")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -231,32 +262,38 @@ func (_ProviderRegistry *ProviderRegistryCaller) Owner(opts *bind.CallOpts) (com
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_ProviderRegistry *ProviderRegistrySession) Owner() (common.Address, error) {
-	return _ProviderRegistry.Contract.Owner(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsSession) Owner() (common.Address, error) {
+	return _Contracts.Contract.Owner(&_Contracts.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() view returns(address)
-func (_ProviderRegistry *ProviderRegistryCallerSession) Owner() (common.Address, error) {
-	return _ProviderRegistry.Contract.Owner(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsCallerSession) Owner() (common.Address, error) {
+	return _Contracts.Contract.Owner(&_Contracts.CallOpts)
 }
 
 // Providers is a free data retrieval call binding the contract method 0x0787bc27.
 //
-// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered)
-func (_ProviderRegistry *ProviderRegistryCaller) Providers(opts *bind.CallOpts, arg0 common.Address) (struct {
-	Stake      *big.Int
-	QosScore   *big.Int
-	Registered bool
+// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered, uint40 registrationTime, uint40 deregistrationTime, string endpointURL)
+func (_Contracts *ContractsCaller) Providers(opts *bind.CallOpts, arg0 common.Address) (struct {
+	Stake              *big.Int
+	QosScore           *big.Int
+	Registered         bool
+	RegistrationTime   *big.Int
+	DeregistrationTime *big.Int
+	EndpointURL        string
 }, error) {
 	var out []interface{}
-	err := _ProviderRegistry.contract.Call(opts, &out, "providers", arg0)
+	err := _Contracts.contract.Call(opts, &out, "providers", arg0)
 
 	outstruct := new(struct {
-		Stake      *big.Int
-		QosScore   *big.Int
-		Registered bool
+		Stake              *big.Int
+		QosScore           *big.Int
+		Registered         bool
+		RegistrationTime   *big.Int
+		DeregistrationTime *big.Int
+		EndpointURL        string
 	})
 	if err != nil {
 		return *outstruct, err
@@ -265,6 +302,9 @@ func (_ProviderRegistry *ProviderRegistryCaller) Providers(opts *bind.CallOpts, 
 	outstruct.Stake = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
 	outstruct.QosScore = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
 	outstruct.Registered = *abi.ConvertType(out[2], new(bool)).(*bool)
+	outstruct.RegistrationTime = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+	outstruct.DeregistrationTime = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+	outstruct.EndpointURL = *abi.ConvertType(out[5], new(string)).(*string)
 
 	return *outstruct, err
 
@@ -272,32 +312,38 @@ func (_ProviderRegistry *ProviderRegistryCaller) Providers(opts *bind.CallOpts, 
 
 // Providers is a free data retrieval call binding the contract method 0x0787bc27.
 //
-// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered)
-func (_ProviderRegistry *ProviderRegistrySession) Providers(arg0 common.Address) (struct {
-	Stake      *big.Int
-	QosScore   *big.Int
-	Registered bool
+// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered, uint40 registrationTime, uint40 deregistrationTime, string endpointURL)
+func (_Contracts *ContractsSession) Providers(arg0 common.Address) (struct {
+	Stake              *big.Int
+	QosScore           *big.Int
+	Registered         bool
+	RegistrationTime   *big.Int
+	DeregistrationTime *big.Int
+	EndpointURL        string
 }, error) {
-	return _ProviderRegistry.Contract.Providers(&_ProviderRegistry.CallOpts, arg0)
+	return _Contracts.Contract.Providers(&_Contracts.CallOpts, arg0)
 }
 
 // Providers is a free data retrieval call binding the contract method 0x0787bc27.
 //
-// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered)
-func (_ProviderRegistry *ProviderRegistryCallerSession) Providers(arg0 common.Address) (struct {
-	Stake      *big.Int
-	QosScore   *big.Int
-	Registered bool
+// Solidity: function providers(address ) view returns(uint256 stake, uint256 qosScore, bool registered, uint40 registrationTime, uint40 deregistrationTime, string endpointURL)
+func (_Contracts *ContractsCallerSession) Providers(arg0 common.Address) (struct {
+	Stake              *big.Int
+	QosScore           *big.Int
+	Registered         bool
+	RegistrationTime   *big.Int
+	DeregistrationTime *big.Int
+	EndpointURL        string
 }, error) {
-	return _ProviderRegistry.Contract.Providers(&_ProviderRegistry.CallOpts, arg0)
+	return _Contracts.Contract.Providers(&_Contracts.CallOpts, arg0)
 }
 
 // StakeToken is a free data retrieval call binding the contract method 0x51ed6a30.
 //
 // Solidity: function stakeToken() view returns(address)
-func (_ProviderRegistry *ProviderRegistryCaller) StakeToken(opts *bind.CallOpts) (common.Address, error) {
+func (_Contracts *ContractsCaller) StakeToken(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _ProviderRegistry.contract.Call(opts, &out, "stakeToken")
+	err := _Contracts.contract.Call(opts, &out, "stakeToken")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -312,209 +358,230 @@ func (_ProviderRegistry *ProviderRegistryCaller) StakeToken(opts *bind.CallOpts)
 // StakeToken is a free data retrieval call binding the contract method 0x51ed6a30.
 //
 // Solidity: function stakeToken() view returns(address)
-func (_ProviderRegistry *ProviderRegistrySession) StakeToken() (common.Address, error) {
-	return _ProviderRegistry.Contract.StakeToken(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsSession) StakeToken() (common.Address, error) {
+	return _Contracts.Contract.StakeToken(&_Contracts.CallOpts)
 }
 
 // StakeToken is a free data retrieval call binding the contract method 0x51ed6a30.
 //
 // Solidity: function stakeToken() view returns(address)
-func (_ProviderRegistry *ProviderRegistryCallerSession) StakeToken() (common.Address, error) {
-	return _ProviderRegistry.Contract.StakeToken(&_ProviderRegistry.CallOpts)
+func (_Contracts *ContractsCallerSession) StakeToken() (common.Address, error) {
+	return _Contracts.Contract.StakeToken(&_Contracts.CallOpts)
 }
 
 // DepositStake is a paid mutator transaction binding the contract method 0xcb82cc8f.
 //
 // Solidity: function depositStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) DepositStake(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "depositStake", amount)
+func (_Contracts *ContractsTransactor) DepositStake(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "depositStake", amount)
 }
 
 // DepositStake is a paid mutator transaction binding the contract method 0xcb82cc8f.
 //
 // Solidity: function depositStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistrySession) DepositStake(amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.DepositStake(&_ProviderRegistry.TransactOpts, amount)
+func (_Contracts *ContractsSession) DepositStake(amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.DepositStake(&_Contracts.TransactOpts, amount)
 }
 
 // DepositStake is a paid mutator transaction binding the contract method 0xcb82cc8f.
 //
 // Solidity: function depositStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) DepositStake(amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.DepositStake(&_ProviderRegistry.TransactOpts, amount)
+func (_Contracts *ContractsTransactorSession) DepositStake(amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.DepositStake(&_Contracts.TransactOpts, amount)
 }
 
 // Deregister is a paid mutator transaction binding the contract method 0xaff5edb1.
 //
 // Solidity: function deregister() returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) Deregister(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "deregister")
+func (_Contracts *ContractsTransactor) Deregister(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "deregister")
 }
 
 // Deregister is a paid mutator transaction binding the contract method 0xaff5edb1.
 //
 // Solidity: function deregister() returns()
-func (_ProviderRegistry *ProviderRegistrySession) Deregister() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.Deregister(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsSession) Deregister() (*types.Transaction, error) {
+	return _Contracts.Contract.Deregister(&_Contracts.TransactOpts)
 }
 
 // Deregister is a paid mutator transaction binding the contract method 0xaff5edb1.
 //
 // Solidity: function deregister() returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) Deregister() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.Deregister(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsTransactorSession) Deregister() (*types.Transaction, error) {
+	return _Contracts.Contract.Deregister(&_Contracts.TransactOpts)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
 // Solidity: function register() returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) Register(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "register")
+func (_Contracts *ContractsTransactor) Register(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "register")
 }
 
 // Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
 // Solidity: function register() returns()
-func (_ProviderRegistry *ProviderRegistrySession) Register() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.Register(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsSession) Register() (*types.Transaction, error) {
+	return _Contracts.Contract.Register(&_Contracts.TransactOpts)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
 // Solidity: function register() returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) Register() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.Register(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsTransactorSession) Register() (*types.Transaction, error) {
+	return _Contracts.Contract.Register(&_Contracts.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "renounceOwnership")
+func (_Contracts *ContractsTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_ProviderRegistry *ProviderRegistrySession) RenounceOwnership() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.RenounceOwnership(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Contracts.Contract.RenounceOwnership(&_Contracts.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) RenounceOwnership() (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.RenounceOwnership(&_ProviderRegistry.TransactOpts)
+func (_Contracts *ContractsTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Contracts.Contract.RenounceOwnership(&_Contracts.TransactOpts)
+}
+
+// SetEndpointURL is a paid mutator transaction binding the contract method 0xf6c9b2d4.
+//
+// Solidity: function setEndpointURL(string _url) returns()
+func (_Contracts *ContractsTransactor) SetEndpointURL(opts *bind.TransactOpts, _url string) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "setEndpointURL", _url)
+}
+
+// SetEndpointURL is a paid mutator transaction binding the contract method 0xf6c9b2d4.
+//
+// Solidity: function setEndpointURL(string _url) returns()
+func (_Contracts *ContractsSession) SetEndpointURL(_url string) (*types.Transaction, error) {
+	return _Contracts.Contract.SetEndpointURL(&_Contracts.TransactOpts, _url)
+}
+
+// SetEndpointURL is a paid mutator transaction binding the contract method 0xf6c9b2d4.
+//
+// Solidity: function setEndpointURL(string _url) returns()
+func (_Contracts *ContractsTransactorSession) SetEndpointURL(_url string) (*types.Transaction, error) {
+	return _Contracts.Contract.SetEndpointURL(&_Contracts.TransactOpts, _url)
 }
 
 // SetMinStake is a paid mutator transaction binding the contract method 0x8c80fd90.
 //
 // Solidity: function setMinStake(uint256 _minStake) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) SetMinStake(opts *bind.TransactOpts, _minStake *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "setMinStake", _minStake)
+func (_Contracts *ContractsTransactor) SetMinStake(opts *bind.TransactOpts, _minStake *big.Int) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "setMinStake", _minStake)
 }
 
 // SetMinStake is a paid mutator transaction binding the contract method 0x8c80fd90.
 //
 // Solidity: function setMinStake(uint256 _minStake) returns()
-func (_ProviderRegistry *ProviderRegistrySession) SetMinStake(_minStake *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.SetMinStake(&_ProviderRegistry.TransactOpts, _minStake)
+func (_Contracts *ContractsSession) SetMinStake(_minStake *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.SetMinStake(&_Contracts.TransactOpts, _minStake)
 }
 
 // SetMinStake is a paid mutator transaction binding the contract method 0x8c80fd90.
 //
 // Solidity: function setMinStake(uint256 _minStake) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) SetMinStake(_minStake *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.SetMinStake(&_ProviderRegistry.TransactOpts, _minStake)
+func (_Contracts *ContractsTransactorSession) SetMinStake(_minStake *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.SetMinStake(&_Contracts.TransactOpts, _minStake)
 }
 
 // SlashProvider is a paid mutator transaction binding the contract method 0x3febfc0f.
 //
 // Solidity: function slashProvider(address provider_, uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) SlashProvider(opts *bind.TransactOpts, provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "slashProvider", provider_, amount)
+func (_Contracts *ContractsTransactor) SlashProvider(opts *bind.TransactOpts, provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "slashProvider", provider_, amount)
 }
 
 // SlashProvider is a paid mutator transaction binding the contract method 0x3febfc0f.
 //
 // Solidity: function slashProvider(address provider_, uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistrySession) SlashProvider(provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.SlashProvider(&_ProviderRegistry.TransactOpts, provider_, amount)
+func (_Contracts *ContractsSession) SlashProvider(provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.SlashProvider(&_Contracts.TransactOpts, provider_, amount)
 }
 
 // SlashProvider is a paid mutator transaction binding the contract method 0x3febfc0f.
 //
 // Solidity: function slashProvider(address provider_, uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) SlashProvider(provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.SlashProvider(&_ProviderRegistry.TransactOpts, provider_, amount)
+func (_Contracts *ContractsTransactorSession) SlashProvider(provider_ common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.SlashProvider(&_Contracts.TransactOpts, provider_, amount)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "transferOwnership", newOwner)
+func (_Contracts *ContractsTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_ProviderRegistry *ProviderRegistrySession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.TransferOwnership(&_ProviderRegistry.TransactOpts, newOwner)
+func (_Contracts *ContractsSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Contracts.Contract.TransferOwnership(&_Contracts.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.TransferOwnership(&_ProviderRegistry.TransactOpts, newOwner)
+func (_Contracts *ContractsTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Contracts.Contract.TransferOwnership(&_Contracts.TransactOpts, newOwner)
 }
 
 // UpdateQoS is a paid mutator transaction binding the contract method 0x117835a4.
 //
 // Solidity: function updateQoS(address provider_, uint256 score) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) UpdateQoS(opts *bind.TransactOpts, provider_ common.Address, score *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "updateQoS", provider_, score)
+func (_Contracts *ContractsTransactor) UpdateQoS(opts *bind.TransactOpts, provider_ common.Address, score *big.Int) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "updateQoS", provider_, score)
 }
 
 // UpdateQoS is a paid mutator transaction binding the contract method 0x117835a4.
 //
 // Solidity: function updateQoS(address provider_, uint256 score) returns()
-func (_ProviderRegistry *ProviderRegistrySession) UpdateQoS(provider_ common.Address, score *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.UpdateQoS(&_ProviderRegistry.TransactOpts, provider_, score)
+func (_Contracts *ContractsSession) UpdateQoS(provider_ common.Address, score *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.UpdateQoS(&_Contracts.TransactOpts, provider_, score)
 }
 
 // UpdateQoS is a paid mutator transaction binding the contract method 0x117835a4.
 //
 // Solidity: function updateQoS(address provider_, uint256 score) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) UpdateQoS(provider_ common.Address, score *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.UpdateQoS(&_ProviderRegistry.TransactOpts, provider_, score)
+func (_Contracts *ContractsTransactorSession) UpdateQoS(provider_ common.Address, score *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.UpdateQoS(&_Contracts.TransactOpts, provider_, score)
 }
 
 // WithdrawStake is a paid mutator transaction binding the contract method 0x25d5971f.
 //
 // Solidity: function withdrawStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactor) WithdrawStake(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.contract.Transact(opts, "withdrawStake", amount)
+func (_Contracts *ContractsTransactor) WithdrawStake(opts *bind.TransactOpts, amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.contract.Transact(opts, "withdrawStake", amount)
 }
 
 // WithdrawStake is a paid mutator transaction binding the contract method 0x25d5971f.
 //
 // Solidity: function withdrawStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistrySession) WithdrawStake(amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.WithdrawStake(&_ProviderRegistry.TransactOpts, amount)
+func (_Contracts *ContractsSession) WithdrawStake(amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.WithdrawStake(&_Contracts.TransactOpts, amount)
 }
 
 // WithdrawStake is a paid mutator transaction binding the contract method 0x25d5971f.
 //
 // Solidity: function withdrawStake(uint256 amount) returns()
-func (_ProviderRegistry *ProviderRegistryTransactorSession) WithdrawStake(amount *big.Int) (*types.Transaction, error) {
-	return _ProviderRegistry.Contract.WithdrawStake(&_ProviderRegistry.TransactOpts, amount)
+func (_Contracts *ContractsTransactorSession) WithdrawStake(amount *big.Int) (*types.Transaction, error) {
+	return _Contracts.Contract.WithdrawStake(&_Contracts.TransactOpts, amount)
 }
 
-// ProviderRegistryOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the ProviderRegistry contract.
-type ProviderRegistryOwnershipTransferredIterator struct {
-	Event *ProviderRegistryOwnershipTransferred // Event containing the contract specifics and raw log
+// ContractsOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the Contracts contract.
+type ContractsOwnershipTransferredIterator struct {
+	Event *ContractsOwnershipTransferred // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -528,7 +595,7 @@ type ProviderRegistryOwnershipTransferredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryOwnershipTransferredIterator) Next() bool {
+func (it *ContractsOwnershipTransferredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -537,7 +604,7 @@ func (it *ProviderRegistryOwnershipTransferredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryOwnershipTransferred)
+			it.Event = new(ContractsOwnershipTransferred)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -552,7 +619,7 @@ func (it *ProviderRegistryOwnershipTransferredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryOwnershipTransferred)
+		it.Event = new(ContractsOwnershipTransferred)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -568,19 +635,19 @@ func (it *ProviderRegistryOwnershipTransferredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryOwnershipTransferredIterator) Error() error {
+func (it *ContractsOwnershipTransferredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryOwnershipTransferredIterator) Close() error {
+func (it *ContractsOwnershipTransferredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryOwnershipTransferred represents a OwnershipTransferred event raised by the ProviderRegistry contract.
-type ProviderRegistryOwnershipTransferred struct {
+// ContractsOwnershipTransferred represents a OwnershipTransferred event raised by the Contracts contract.
+type ContractsOwnershipTransferred struct {
 	PreviousOwner common.Address
 	NewOwner      common.Address
 	Raw           types.Log // Blockchain specific contextual infos
@@ -589,7 +656,7 @@ type ProviderRegistryOwnershipTransferred struct {
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ProviderRegistryOwnershipTransferredIterator, error) {
+func (_Contracts *ContractsFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ContractsOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -600,17 +667,17 @@ func (_ProviderRegistry *ProviderRegistryFilterer) FilterOwnershipTransferred(op
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryOwnershipTransferredIterator{contract: _ProviderRegistry.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+	return &ContractsOwnershipTransferredIterator{contract: _Contracts.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ProviderRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+func (_Contracts *ContractsFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ContractsOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
 	for _, previousOwnerItem := range previousOwner {
@@ -621,7 +688,7 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchOwnershipTransferred(opt
 		newOwnerRule = append(newOwnerRule, newOwnerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -631,8 +698,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchOwnershipTransferred(opt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryOwnershipTransferred)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				event := new(ContractsOwnershipTransferred)
+				if err := _Contracts.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -656,18 +723,18 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchOwnershipTransferred(opt
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseOwnershipTransferred(log types.Log) (*ProviderRegistryOwnershipTransferred, error) {
-	event := new(ProviderRegistryOwnershipTransferred)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseOwnershipTransferred(log types.Log) (*ContractsOwnershipTransferred, error) {
+	event := new(ContractsOwnershipTransferred)
+	if err := _Contracts.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryProviderDeregisteredIterator is returned from FilterProviderDeregistered and is used to iterate over the raw logs and unpacked data for ProviderDeregistered events raised by the ProviderRegistry contract.
-type ProviderRegistryProviderDeregisteredIterator struct {
-	Event *ProviderRegistryProviderDeregistered // Event containing the contract specifics and raw log
+// ContractsProviderDeregisteredIterator is returned from FilterProviderDeregistered and is used to iterate over the raw logs and unpacked data for ProviderDeregistered events raised by the Contracts contract.
+type ContractsProviderDeregisteredIterator struct {
+	Event *ContractsProviderDeregistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -681,7 +748,7 @@ type ProviderRegistryProviderDeregisteredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryProviderDeregisteredIterator) Next() bool {
+func (it *ContractsProviderDeregisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -690,7 +757,7 @@ func (it *ProviderRegistryProviderDeregisteredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryProviderDeregistered)
+			it.Event = new(ContractsProviderDeregistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -705,7 +772,7 @@ func (it *ProviderRegistryProviderDeregisteredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryProviderDeregistered)
+		it.Event = new(ContractsProviderDeregistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -721,19 +788,19 @@ func (it *ProviderRegistryProviderDeregisteredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryProviderDeregisteredIterator) Error() error {
+func (it *ContractsProviderDeregisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryProviderDeregisteredIterator) Close() error {
+func (it *ContractsProviderDeregisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryProviderDeregistered represents a ProviderDeregistered event raised by the ProviderRegistry contract.
-type ProviderRegistryProviderDeregistered struct {
+// ContractsProviderDeregistered represents a ProviderDeregistered event raised by the Contracts contract.
+type ContractsProviderDeregistered struct {
 	Provider common.Address
 	Raw      types.Log // Blockchain specific contextual infos
 }
@@ -741,31 +808,31 @@ type ProviderRegistryProviderDeregistered struct {
 // FilterProviderDeregistered is a free log retrieval operation binding the contract event 0xf04091b4a187e321a42001e46961e45b6a75b203fc6fb766b7e05505f6080abb.
 //
 // Solidity: event ProviderDeregistered(address indexed provider)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterProviderDeregistered(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryProviderDeregisteredIterator, error) {
+func (_Contracts *ContractsFilterer) FilterProviderDeregistered(opts *bind.FilterOpts, provider []common.Address) (*ContractsProviderDeregisteredIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "ProviderDeregistered", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "ProviderDeregistered", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryProviderDeregisteredIterator{contract: _ProviderRegistry.contract, event: "ProviderDeregistered", logs: logs, sub: sub}, nil
+	return &ContractsProviderDeregisteredIterator{contract: _Contracts.contract, event: "ProviderDeregistered", logs: logs, sub: sub}, nil
 }
 
 // WatchProviderDeregistered is a free log subscription operation binding the contract event 0xf04091b4a187e321a42001e46961e45b6a75b203fc6fb766b7e05505f6080abb.
 //
 // Solidity: event ProviderDeregistered(address indexed provider)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderDeregistered(opts *bind.WatchOpts, sink chan<- *ProviderRegistryProviderDeregistered, provider []common.Address) (event.Subscription, error) {
+func (_Contracts *ContractsFilterer) WatchProviderDeregistered(opts *bind.WatchOpts, sink chan<- *ContractsProviderDeregistered, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "ProviderDeregistered", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "ProviderDeregistered", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -775,8 +842,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderDeregistered(opt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryProviderDeregistered)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderDeregistered", log); err != nil {
+				event := new(ContractsProviderDeregistered)
+				if err := _Contracts.contract.UnpackLog(event, "ProviderDeregistered", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -800,18 +867,18 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderDeregistered(opt
 // ParseProviderDeregistered is a log parse operation binding the contract event 0xf04091b4a187e321a42001e46961e45b6a75b203fc6fb766b7e05505f6080abb.
 //
 // Solidity: event ProviderDeregistered(address indexed provider)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseProviderDeregistered(log types.Log) (*ProviderRegistryProviderDeregistered, error) {
-	event := new(ProviderRegistryProviderDeregistered)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderDeregistered", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseProviderDeregistered(log types.Log) (*ContractsProviderDeregistered, error) {
+	event := new(ContractsProviderDeregistered)
+	if err := _Contracts.contract.UnpackLog(event, "ProviderDeregistered", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryProviderRegisteredIterator is returned from FilterProviderRegistered and is used to iterate over the raw logs and unpacked data for ProviderRegistered events raised by the ProviderRegistry contract.
-type ProviderRegistryProviderRegisteredIterator struct {
-	Event *ProviderRegistryProviderRegistered // Event containing the contract specifics and raw log
+// ContractsProviderRegisteredIterator is returned from FilterProviderRegistered and is used to iterate over the raw logs and unpacked data for ProviderRegistered events raised by the Contracts contract.
+type ContractsProviderRegisteredIterator struct {
+	Event *ContractsProviderRegistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -825,7 +892,7 @@ type ProviderRegistryProviderRegisteredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryProviderRegisteredIterator) Next() bool {
+func (it *ContractsProviderRegisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -834,7 +901,7 @@ func (it *ProviderRegistryProviderRegisteredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryProviderRegistered)
+			it.Event = new(ContractsProviderRegistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -849,7 +916,7 @@ func (it *ProviderRegistryProviderRegisteredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryProviderRegistered)
+		it.Event = new(ContractsProviderRegistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -865,52 +932,53 @@ func (it *ProviderRegistryProviderRegisteredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryProviderRegisteredIterator) Error() error {
+func (it *ContractsProviderRegisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryProviderRegisteredIterator) Close() error {
+func (it *ContractsProviderRegisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryProviderRegistered represents a ProviderRegistered event raised by the ProviderRegistry contract.
-type ProviderRegistryProviderRegistered struct {
-	Provider common.Address
-	Stake    *big.Int
-	Raw      types.Log // Blockchain specific contextual infos
+// ContractsProviderRegistered represents a ProviderRegistered event raised by the Contracts contract.
+type ContractsProviderRegistered struct {
+	Provider    common.Address
+	Stake       *big.Int
+	EndpointURL string
+	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterProviderRegistered is a free log retrieval operation binding the contract event 0x90c9734131c1e4fb36cde2d71e6feb93fb258f71be8a85411c173d25e1516e80.
+// FilterProviderRegistered is a free log retrieval operation binding the contract event 0xf2499bc9b6818e3b377491d8b0fbef0d628a495d3ddd4b7cc5ce77bf9e228fa2.
 //
-// Solidity: event ProviderRegistered(address indexed provider, uint256 stake)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterProviderRegistered(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryProviderRegisteredIterator, error) {
+// Solidity: event ProviderRegistered(address indexed provider, uint256 stake, string endpointURL)
+func (_Contracts *ContractsFilterer) FilterProviderRegistered(opts *bind.FilterOpts, provider []common.Address) (*ContractsProviderRegisteredIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "ProviderRegistered", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "ProviderRegistered", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryProviderRegisteredIterator{contract: _ProviderRegistry.contract, event: "ProviderRegistered", logs: logs, sub: sub}, nil
+	return &ContractsProviderRegisteredIterator{contract: _Contracts.contract, event: "ProviderRegistered", logs: logs, sub: sub}, nil
 }
 
-// WatchProviderRegistered is a free log subscription operation binding the contract event 0x90c9734131c1e4fb36cde2d71e6feb93fb258f71be8a85411c173d25e1516e80.
+// WatchProviderRegistered is a free log subscription operation binding the contract event 0xf2499bc9b6818e3b377491d8b0fbef0d628a495d3ddd4b7cc5ce77bf9e228fa2.
 //
-// Solidity: event ProviderRegistered(address indexed provider, uint256 stake)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderRegistered(opts *bind.WatchOpts, sink chan<- *ProviderRegistryProviderRegistered, provider []common.Address) (event.Subscription, error) {
+// Solidity: event ProviderRegistered(address indexed provider, uint256 stake, string endpointURL)
+func (_Contracts *ContractsFilterer) WatchProviderRegistered(opts *bind.WatchOpts, sink chan<- *ContractsProviderRegistered, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "ProviderRegistered", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "ProviderRegistered", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -920,8 +988,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderRegistered(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryProviderRegistered)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderRegistered", log); err != nil {
+				event := new(ContractsProviderRegistered)
+				if err := _Contracts.contract.UnpackLog(event, "ProviderRegistered", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -942,21 +1010,21 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderRegistered(opts 
 	}), nil
 }
 
-// ParseProviderRegistered is a log parse operation binding the contract event 0x90c9734131c1e4fb36cde2d71e6feb93fb258f71be8a85411c173d25e1516e80.
+// ParseProviderRegistered is a log parse operation binding the contract event 0xf2499bc9b6818e3b377491d8b0fbef0d628a495d3ddd4b7cc5ce77bf9e228fa2.
 //
-// Solidity: event ProviderRegistered(address indexed provider, uint256 stake)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseProviderRegistered(log types.Log) (*ProviderRegistryProviderRegistered, error) {
-	event := new(ProviderRegistryProviderRegistered)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderRegistered", log); err != nil {
+// Solidity: event ProviderRegistered(address indexed provider, uint256 stake, string endpointURL)
+func (_Contracts *ContractsFilterer) ParseProviderRegistered(log types.Log) (*ContractsProviderRegistered, error) {
+	event := new(ContractsProviderRegistered)
+	if err := _Contracts.contract.UnpackLog(event, "ProviderRegistered", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryProviderSlashedIterator is returned from FilterProviderSlashed and is used to iterate over the raw logs and unpacked data for ProviderSlashed events raised by the ProviderRegistry contract.
-type ProviderRegistryProviderSlashedIterator struct {
-	Event *ProviderRegistryProviderSlashed // Event containing the contract specifics and raw log
+// ContractsProviderSlashedIterator is returned from FilterProviderSlashed and is used to iterate over the raw logs and unpacked data for ProviderSlashed events raised by the Contracts contract.
+type ContractsProviderSlashedIterator struct {
+	Event *ContractsProviderSlashed // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -970,7 +1038,7 @@ type ProviderRegistryProviderSlashedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryProviderSlashedIterator) Next() bool {
+func (it *ContractsProviderSlashedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -979,7 +1047,7 @@ func (it *ProviderRegistryProviderSlashedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryProviderSlashed)
+			it.Event = new(ContractsProviderSlashed)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -994,7 +1062,7 @@ func (it *ProviderRegistryProviderSlashedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryProviderSlashed)
+		it.Event = new(ContractsProviderSlashed)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1010,19 +1078,19 @@ func (it *ProviderRegistryProviderSlashedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryProviderSlashedIterator) Error() error {
+func (it *ContractsProviderSlashedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryProviderSlashedIterator) Close() error {
+func (it *ContractsProviderSlashedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryProviderSlashed represents a ProviderSlashed event raised by the ProviderRegistry contract.
-type ProviderRegistryProviderSlashed struct {
+// ContractsProviderSlashed represents a ProviderSlashed event raised by the Contracts contract.
+type ContractsProviderSlashed struct {
 	Provider common.Address
 	Amount   *big.Int
 	Raw      types.Log // Blockchain specific contextual infos
@@ -1031,31 +1099,31 @@ type ProviderRegistryProviderSlashed struct {
 // FilterProviderSlashed is a free log retrieval operation binding the contract event 0x1f23fbfb3eedfa7285fbf3046ae9bdcfdfc0cbc70611752972939d76849ed5c5.
 //
 // Solidity: event ProviderSlashed(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterProviderSlashed(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryProviderSlashedIterator, error) {
+func (_Contracts *ContractsFilterer) FilterProviderSlashed(opts *bind.FilterOpts, provider []common.Address) (*ContractsProviderSlashedIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "ProviderSlashed", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "ProviderSlashed", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryProviderSlashedIterator{contract: _ProviderRegistry.contract, event: "ProviderSlashed", logs: logs, sub: sub}, nil
+	return &ContractsProviderSlashedIterator{contract: _Contracts.contract, event: "ProviderSlashed", logs: logs, sub: sub}, nil
 }
 
 // WatchProviderSlashed is a free log subscription operation binding the contract event 0x1f23fbfb3eedfa7285fbf3046ae9bdcfdfc0cbc70611752972939d76849ed5c5.
 //
 // Solidity: event ProviderSlashed(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderSlashed(opts *bind.WatchOpts, sink chan<- *ProviderRegistryProviderSlashed, provider []common.Address) (event.Subscription, error) {
+func (_Contracts *ContractsFilterer) WatchProviderSlashed(opts *bind.WatchOpts, sink chan<- *ContractsProviderSlashed, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "ProviderSlashed", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "ProviderSlashed", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1065,8 +1133,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderSlashed(opts *bi
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryProviderSlashed)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderSlashed", log); err != nil {
+				event := new(ContractsProviderSlashed)
+				if err := _Contracts.contract.UnpackLog(event, "ProviderSlashed", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1090,18 +1158,18 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchProviderSlashed(opts *bi
 // ParseProviderSlashed is a log parse operation binding the contract event 0x1f23fbfb3eedfa7285fbf3046ae9bdcfdfc0cbc70611752972939d76849ed5c5.
 //
 // Solidity: event ProviderSlashed(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseProviderSlashed(log types.Log) (*ProviderRegistryProviderSlashed, error) {
-	event := new(ProviderRegistryProviderSlashed)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "ProviderSlashed", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseProviderSlashed(log types.Log) (*ContractsProviderSlashed, error) {
+	event := new(ContractsProviderSlashed)
+	if err := _Contracts.contract.UnpackLog(event, "ProviderSlashed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryQoSUpdatedIterator is returned from FilterQoSUpdated and is used to iterate over the raw logs and unpacked data for QoSUpdated events raised by the ProviderRegistry contract.
-type ProviderRegistryQoSUpdatedIterator struct {
-	Event *ProviderRegistryQoSUpdated // Event containing the contract specifics and raw log
+// ContractsProviderURLUpdatedIterator is returned from FilterProviderURLUpdated and is used to iterate over the raw logs and unpacked data for ProviderURLUpdated events raised by the Contracts contract.
+type ContractsProviderURLUpdatedIterator struct {
+	Event *ContractsProviderURLUpdated // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1115,7 +1183,7 @@ type ProviderRegistryQoSUpdatedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryQoSUpdatedIterator) Next() bool {
+func (it *ContractsProviderURLUpdatedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1124,7 +1192,7 @@ func (it *ProviderRegistryQoSUpdatedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryQoSUpdated)
+			it.Event = new(ContractsProviderURLUpdated)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1139,7 +1207,7 @@ func (it *ProviderRegistryQoSUpdatedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryQoSUpdated)
+		it.Event = new(ContractsProviderURLUpdated)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1155,52 +1223,52 @@ func (it *ProviderRegistryQoSUpdatedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryQoSUpdatedIterator) Error() error {
+func (it *ContractsProviderURLUpdatedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryQoSUpdatedIterator) Close() error {
+func (it *ContractsProviderURLUpdatedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryQoSUpdated represents a QoSUpdated event raised by the ProviderRegistry contract.
-type ProviderRegistryQoSUpdated struct {
+// ContractsProviderURLUpdated represents a ProviderURLUpdated event raised by the Contracts contract.
+type ContractsProviderURLUpdated struct {
 	Provider common.Address
-	NewScore *big.Int
+	NewURL   string
 	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterQoSUpdated is a free log retrieval operation binding the contract event 0xaeef8199fb5a7c06c4f963578d283254c5b64a4c2cf1dd22ea4191858e41c80a.
+// FilterProviderURLUpdated is a free log retrieval operation binding the contract event 0xf3f3d311c4f10915cec36706dee2e7d87ff331c7b97db73cbbc7b88a9407a34a.
 //
-// Solidity: event QoSUpdated(address indexed provider, uint256 newScore)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterQoSUpdated(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryQoSUpdatedIterator, error) {
+// Solidity: event ProviderURLUpdated(address indexed provider, string newURL)
+func (_Contracts *ContractsFilterer) FilterProviderURLUpdated(opts *bind.FilterOpts, provider []common.Address) (*ContractsProviderURLUpdatedIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "QoSUpdated", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "ProviderURLUpdated", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryQoSUpdatedIterator{contract: _ProviderRegistry.contract, event: "QoSUpdated", logs: logs, sub: sub}, nil
+	return &ContractsProviderURLUpdatedIterator{contract: _Contracts.contract, event: "ProviderURLUpdated", logs: logs, sub: sub}, nil
 }
 
-// WatchQoSUpdated is a free log subscription operation binding the contract event 0xaeef8199fb5a7c06c4f963578d283254c5b64a4c2cf1dd22ea4191858e41c80a.
+// WatchProviderURLUpdated is a free log subscription operation binding the contract event 0xf3f3d311c4f10915cec36706dee2e7d87ff331c7b97db73cbbc7b88a9407a34a.
 //
-// Solidity: event QoSUpdated(address indexed provider, uint256 newScore)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchQoSUpdated(opts *bind.WatchOpts, sink chan<- *ProviderRegistryQoSUpdated, provider []common.Address) (event.Subscription, error) {
+// Solidity: event ProviderURLUpdated(address indexed provider, string newURL)
+func (_Contracts *ContractsFilterer) WatchProviderURLUpdated(opts *bind.WatchOpts, sink chan<- *ContractsProviderURLUpdated, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "QoSUpdated", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "ProviderURLUpdated", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1210,8 +1278,153 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchQoSUpdated(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryQoSUpdated)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "QoSUpdated", log); err != nil {
+				event := new(ContractsProviderURLUpdated)
+				if err := _Contracts.contract.UnpackLog(event, "ProviderURLUpdated", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseProviderURLUpdated is a log parse operation binding the contract event 0xf3f3d311c4f10915cec36706dee2e7d87ff331c7b97db73cbbc7b88a9407a34a.
+//
+// Solidity: event ProviderURLUpdated(address indexed provider, string newURL)
+func (_Contracts *ContractsFilterer) ParseProviderURLUpdated(log types.Log) (*ContractsProviderURLUpdated, error) {
+	event := new(ContractsProviderURLUpdated)
+	if err := _Contracts.contract.UnpackLog(event, "ProviderURLUpdated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ContractsQoSUpdatedIterator is returned from FilterQoSUpdated and is used to iterate over the raw logs and unpacked data for QoSUpdated events raised by the Contracts contract.
+type ContractsQoSUpdatedIterator struct {
+	Event *ContractsQoSUpdated // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ContractsQoSUpdatedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ContractsQoSUpdated)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ContractsQoSUpdated)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ContractsQoSUpdatedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ContractsQoSUpdatedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ContractsQoSUpdated represents a QoSUpdated event raised by the Contracts contract.
+type ContractsQoSUpdated struct {
+	Provider common.Address
+	NewScore *big.Int
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterQoSUpdated is a free log retrieval operation binding the contract event 0xaeef8199fb5a7c06c4f963578d283254c5b64a4c2cf1dd22ea4191858e41c80a.
+//
+// Solidity: event QoSUpdated(address indexed provider, uint256 newScore)
+func (_Contracts *ContractsFilterer) FilterQoSUpdated(opts *bind.FilterOpts, provider []common.Address) (*ContractsQoSUpdatedIterator, error) {
+
+	var providerRule []interface{}
+	for _, providerItem := range provider {
+		providerRule = append(providerRule, providerItem)
+	}
+
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "QoSUpdated", providerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ContractsQoSUpdatedIterator{contract: _Contracts.contract, event: "QoSUpdated", logs: logs, sub: sub}, nil
+}
+
+// WatchQoSUpdated is a free log subscription operation binding the contract event 0xaeef8199fb5a7c06c4f963578d283254c5b64a4c2cf1dd22ea4191858e41c80a.
+//
+// Solidity: event QoSUpdated(address indexed provider, uint256 newScore)
+func (_Contracts *ContractsFilterer) WatchQoSUpdated(opts *bind.WatchOpts, sink chan<- *ContractsQoSUpdated, provider []common.Address) (event.Subscription, error) {
+
+	var providerRule []interface{}
+	for _, providerItem := range provider {
+		providerRule = append(providerRule, providerItem)
+	}
+
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "QoSUpdated", providerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ContractsQoSUpdated)
+				if err := _Contracts.contract.UnpackLog(event, "QoSUpdated", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1235,18 +1448,18 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchQoSUpdated(opts *bind.Wa
 // ParseQoSUpdated is a log parse operation binding the contract event 0xaeef8199fb5a7c06c4f963578d283254c5b64a4c2cf1dd22ea4191858e41c80a.
 //
 // Solidity: event QoSUpdated(address indexed provider, uint256 newScore)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseQoSUpdated(log types.Log) (*ProviderRegistryQoSUpdated, error) {
-	event := new(ProviderRegistryQoSUpdated)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "QoSUpdated", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseQoSUpdated(log types.Log) (*ContractsQoSUpdated, error) {
+	event := new(ContractsQoSUpdated)
+	if err := _Contracts.contract.UnpackLog(event, "QoSUpdated", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryStakeDepositedIterator is returned from FilterStakeDeposited and is used to iterate over the raw logs and unpacked data for StakeDeposited events raised by the ProviderRegistry contract.
-type ProviderRegistryStakeDepositedIterator struct {
-	Event *ProviderRegistryStakeDeposited // Event containing the contract specifics and raw log
+// ContractsStakeDepositedIterator is returned from FilterStakeDeposited and is used to iterate over the raw logs and unpacked data for StakeDeposited events raised by the Contracts contract.
+type ContractsStakeDepositedIterator struct {
+	Event *ContractsStakeDeposited // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1260,7 +1473,7 @@ type ProviderRegistryStakeDepositedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryStakeDepositedIterator) Next() bool {
+func (it *ContractsStakeDepositedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1269,7 +1482,7 @@ func (it *ProviderRegistryStakeDepositedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryStakeDeposited)
+			it.Event = new(ContractsStakeDeposited)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1284,7 +1497,7 @@ func (it *ProviderRegistryStakeDepositedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryStakeDeposited)
+		it.Event = new(ContractsStakeDeposited)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1300,19 +1513,19 @@ func (it *ProviderRegistryStakeDepositedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryStakeDepositedIterator) Error() error {
+func (it *ContractsStakeDepositedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryStakeDepositedIterator) Close() error {
+func (it *ContractsStakeDepositedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryStakeDeposited represents a StakeDeposited event raised by the ProviderRegistry contract.
-type ProviderRegistryStakeDeposited struct {
+// ContractsStakeDeposited represents a StakeDeposited event raised by the Contracts contract.
+type ContractsStakeDeposited struct {
 	Provider common.Address
 	Amount   *big.Int
 	Raw      types.Log // Blockchain specific contextual infos
@@ -1321,31 +1534,31 @@ type ProviderRegistryStakeDeposited struct {
 // FilterStakeDeposited is a free log retrieval operation binding the contract event 0x0a7bb2e28cc4698aac06db79cf9163bfcc20719286cf59fa7d492ceda1b8edc2.
 //
 // Solidity: event StakeDeposited(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterStakeDeposited(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryStakeDepositedIterator, error) {
+func (_Contracts *ContractsFilterer) FilterStakeDeposited(opts *bind.FilterOpts, provider []common.Address) (*ContractsStakeDepositedIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "StakeDeposited", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "StakeDeposited", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryStakeDepositedIterator{contract: _ProviderRegistry.contract, event: "StakeDeposited", logs: logs, sub: sub}, nil
+	return &ContractsStakeDepositedIterator{contract: _Contracts.contract, event: "StakeDeposited", logs: logs, sub: sub}, nil
 }
 
 // WatchStakeDeposited is a free log subscription operation binding the contract event 0x0a7bb2e28cc4698aac06db79cf9163bfcc20719286cf59fa7d492ceda1b8edc2.
 //
 // Solidity: event StakeDeposited(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeDeposited(opts *bind.WatchOpts, sink chan<- *ProviderRegistryStakeDeposited, provider []common.Address) (event.Subscription, error) {
+func (_Contracts *ContractsFilterer) WatchStakeDeposited(opts *bind.WatchOpts, sink chan<- *ContractsStakeDeposited, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "StakeDeposited", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "StakeDeposited", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1355,8 +1568,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeDeposited(opts *bin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryStakeDeposited)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "StakeDeposited", log); err != nil {
+				event := new(ContractsStakeDeposited)
+				if err := _Contracts.contract.UnpackLog(event, "StakeDeposited", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1380,18 +1593,18 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeDeposited(opts *bin
 // ParseStakeDeposited is a log parse operation binding the contract event 0x0a7bb2e28cc4698aac06db79cf9163bfcc20719286cf59fa7d492ceda1b8edc2.
 //
 // Solidity: event StakeDeposited(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseStakeDeposited(log types.Log) (*ProviderRegistryStakeDeposited, error) {
-	event := new(ProviderRegistryStakeDeposited)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "StakeDeposited", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseStakeDeposited(log types.Log) (*ContractsStakeDeposited, error) {
+	event := new(ContractsStakeDeposited)
+	if err := _Contracts.contract.UnpackLog(event, "StakeDeposited", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ProviderRegistryStakeWithdrawnIterator is returned from FilterStakeWithdrawn and is used to iterate over the raw logs and unpacked data for StakeWithdrawn events raised by the ProviderRegistry contract.
-type ProviderRegistryStakeWithdrawnIterator struct {
-	Event *ProviderRegistryStakeWithdrawn // Event containing the contract specifics and raw log
+// ContractsStakeWithdrawnIterator is returned from FilterStakeWithdrawn and is used to iterate over the raw logs and unpacked data for StakeWithdrawn events raised by the Contracts contract.
+type ContractsStakeWithdrawnIterator struct {
+	Event *ContractsStakeWithdrawn // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1405,7 +1618,7 @@ type ProviderRegistryStakeWithdrawnIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ProviderRegistryStakeWithdrawnIterator) Next() bool {
+func (it *ContractsStakeWithdrawnIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1414,7 +1627,7 @@ func (it *ProviderRegistryStakeWithdrawnIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ProviderRegistryStakeWithdrawn)
+			it.Event = new(ContractsStakeWithdrawn)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1429,7 +1642,7 @@ func (it *ProviderRegistryStakeWithdrawnIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ProviderRegistryStakeWithdrawn)
+		it.Event = new(ContractsStakeWithdrawn)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1445,19 +1658,19 @@ func (it *ProviderRegistryStakeWithdrawnIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ProviderRegistryStakeWithdrawnIterator) Error() error {
+func (it *ContractsStakeWithdrawnIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ProviderRegistryStakeWithdrawnIterator) Close() error {
+func (it *ContractsStakeWithdrawnIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ProviderRegistryStakeWithdrawn represents a StakeWithdrawn event raised by the ProviderRegistry contract.
-type ProviderRegistryStakeWithdrawn struct {
+// ContractsStakeWithdrawn represents a StakeWithdrawn event raised by the Contracts contract.
+type ContractsStakeWithdrawn struct {
 	Provider common.Address
 	Amount   *big.Int
 	Raw      types.Log // Blockchain specific contextual infos
@@ -1466,31 +1679,31 @@ type ProviderRegistryStakeWithdrawn struct {
 // FilterStakeWithdrawn is a free log retrieval operation binding the contract event 0x8108595eb6bad3acefa9da467d90cc2217686d5c5ac85460f8b7849c840645fc.
 //
 // Solidity: event StakeWithdrawn(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) FilterStakeWithdrawn(opts *bind.FilterOpts, provider []common.Address) (*ProviderRegistryStakeWithdrawnIterator, error) {
+func (_Contracts *ContractsFilterer) FilterStakeWithdrawn(opts *bind.FilterOpts, provider []common.Address) (*ContractsStakeWithdrawnIterator, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.FilterLogs(opts, "StakeWithdrawn", providerRule)
+	logs, sub, err := _Contracts.contract.FilterLogs(opts, "StakeWithdrawn", providerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ProviderRegistryStakeWithdrawnIterator{contract: _ProviderRegistry.contract, event: "StakeWithdrawn", logs: logs, sub: sub}, nil
+	return &ContractsStakeWithdrawnIterator{contract: _Contracts.contract, event: "StakeWithdrawn", logs: logs, sub: sub}, nil
 }
 
 // WatchStakeWithdrawn is a free log subscription operation binding the contract event 0x8108595eb6bad3acefa9da467d90cc2217686d5c5ac85460f8b7849c840645fc.
 //
 // Solidity: event StakeWithdrawn(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeWithdrawn(opts *bind.WatchOpts, sink chan<- *ProviderRegistryStakeWithdrawn, provider []common.Address) (event.Subscription, error) {
+func (_Contracts *ContractsFilterer) WatchStakeWithdrawn(opts *bind.WatchOpts, sink chan<- *ContractsStakeWithdrawn, provider []common.Address) (event.Subscription, error) {
 
 	var providerRule []interface{}
 	for _, providerItem := range provider {
 		providerRule = append(providerRule, providerItem)
 	}
 
-	logs, sub, err := _ProviderRegistry.contract.WatchLogs(opts, "StakeWithdrawn", providerRule)
+	logs, sub, err := _Contracts.contract.WatchLogs(opts, "StakeWithdrawn", providerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1500,8 +1713,8 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeWithdrawn(opts *bin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ProviderRegistryStakeWithdrawn)
-				if err := _ProviderRegistry.contract.UnpackLog(event, "StakeWithdrawn", log); err != nil {
+				event := new(ContractsStakeWithdrawn)
+				if err := _Contracts.contract.UnpackLog(event, "StakeWithdrawn", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1525,9 +1738,9 @@ func (_ProviderRegistry *ProviderRegistryFilterer) WatchStakeWithdrawn(opts *bin
 // ParseStakeWithdrawn is a log parse operation binding the contract event 0x8108595eb6bad3acefa9da467d90cc2217686d5c5ac85460f8b7849c840645fc.
 //
 // Solidity: event StakeWithdrawn(address indexed provider, uint256 amount)
-func (_ProviderRegistry *ProviderRegistryFilterer) ParseStakeWithdrawn(log types.Log) (*ProviderRegistryStakeWithdrawn, error) {
-	event := new(ProviderRegistryStakeWithdrawn)
-	if err := _ProviderRegistry.contract.UnpackLog(event, "StakeWithdrawn", log); err != nil {
+func (_Contracts *ContractsFilterer) ParseStakeWithdrawn(log types.Log) (*ContractsStakeWithdrawn, error) {
+	event := new(ContractsStakeWithdrawn)
+	if err := _Contracts.contract.UnpackLog(event, "StakeWithdrawn", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

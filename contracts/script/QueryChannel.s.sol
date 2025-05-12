@@ -12,7 +12,8 @@ contract QueryChannel is Script {
         bytes32 channelId = vm.envBytes32("CHANNEL_ID");
 
         // Fetch struct via public getter
-        (address user, address provider, , uint256 deposit, uint256 expiration, bool open) = channel.channels(channelId);
+        // user, provider, token, deposit, expiration, open, nonce
+        (address user, address provider, , uint256 deposit, uint256 expiration, bool open, ) = channel.channels(channelId);
 
         console.log("Channel ID:");
         console.logBytes32(channelId);

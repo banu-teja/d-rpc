@@ -41,13 +41,14 @@ contract PaymentChannelTest is Test {
 
     function testCloseChannel() public {
         // user signs prefixed message off-chain
-        bytes32 message = keccak256(abi.encodePacked(channelId, deposit/2));
+        uint256 validUntil = block.timestamp + 1 hours;
+        bytes32 message = keccak256(abi.encodePacked(channelId, deposit/2, validUntil)); // Added validUntil
         bytes32 digest = message.toEthSignedMessageHash();
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(userKey, digest);
         bytes memory sig = abi.encodePacked(r, s, v);
 
         vm.prank(provider);
-        chan.closeChannel(channelId, deposit/2, sig);
+        chan.closeChannel(channelId, deposit/2, validUntil, sig); // Added validUntil
 
         assertEq(token.balanceOf(provider), deposit/2);
         assertEq(token.balanceOf(user), deposit/2);

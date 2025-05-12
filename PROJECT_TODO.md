@@ -74,16 +74,22 @@ A **decentralized and incentivized** version of this:
 
 * [x] Staking contract for node operators.
     * Implementation: The `ProviderRegistry.sol` contract manages stake deposits, withdrawals, and tracks staked amounts for node operators using the `StakeToken.sol` ERC20 token. This covers the core staking functionality.
-* [ ] Reward distribution logic (based on usage or time).
-    * Status: Needs implementation. 
-    * Plan: 
-        1. Add a reward pool to `ProviderRegistry.sol` (or a separate contract) funded by project revenues or token inflation.
-        2. Implement a function (e.g., `distributeRewards`) callable by the owner (or DAO).
-        3. This function will iterate through registered providers and distribute rewards based on factors like stake, QoS score, and potentially off-chain usage data provided by the gateway/owner.
-        4. Events should be emitted for reward distribution.
+* [x] Reward distribution logic (based on usage or time).
+    * Status: Implemented (Pull-based system).
+    * Implementation: `ProviderRegistry.sol` now includes:
+        * `rewardPoolBalance`: Tracks available STK for rewards.
+        * `providerRewards`: Mapping `address => uint256` storing claimable rewards.
+        * `fundRewardPool(amount)`: Owner function to add STK to the pool.
+        * `calculateAndAllocateRewards(providers[], totalAmount)`: Owner function to calculate rewards (based on `stake * qosScore`) for a given list of providers and allocate the total amount proportionally to their `providerRewards` balance.
+        * `claimRewards()`: Provider function to withdraw their `providerRewards` balance.
+    * Notes: This design requires an off-chain process (run by the owner/DAO) to:
+        1. Determine which providers are eligible for rewards in a period.
+        2. Calculate the total reward amount for that period.
+        3. Call `calculateAndAllocateRewards` with the list and total amount.
+        4. Providers then call `claimRewards` themselves.
 * [x] Slashing mechanism for malicious/incorrect nodes.
-    * Implementation: `ProviderRegistry.sol` includes an `Ownable` function `slashProvider(address provider_, uint256 amount)`.
-    * Notes: This function allows the owner to reduce a provider's stake and claim the slashed tokens. The effectiveness of this mechanism depends on a reliable off-chain (or on-chain via verification) process for detecting and reporting malicious behavior to the owner/DAO.
+    * Implementation: `ProviderRegistry.sol` includes an `Ownable` function `slashProvider(address provider_, uint256 amount)`. Slashed tokens are transferred to the contract owner.
+    * Notes: The effectiveness of this mechanism depends on a reliable off-chain (or on-chain via verification) process for detecting and reporting malicious behavior to the owner/DAO.
 * [x] Node registration/deregistration contract.
     * Implementation: `ProviderRegistry.sol` handles provider registration (`register()`) and deregistration (`deregister()`). It includes logic for minimum stake requirements and a deregistration cooldown period.
 * [x] Client credit management (prepaid balance, pay-as-you-go).
@@ -104,30 +110,31 @@ A **decentralized and incentivized** version of this:
 * [ ] Build the **Gateway server**:
 
   * [x] Load balancing between nodes.
-    * Implementation: The Go package `node/pkg/loadbalancer/` contains `loadbalancer.go`.
-    * Logic: It implements a `LoadBalancer` that can fetch provider data (address, QoS score, stake). The `GetProvider()` method uses a weighted random selection strategy, where weights are proportional to `QoSScore^2`, favoring higher-quality nodes.
-    * Current Status: Uses test/simulated provider data. Needs to be integrated with live data from the `ProviderRegistry` smart contract (e.g., by listening to `ProviderRegistered`, `QoSUpdated` events).
-  * [ ] Rate limiting, abuse prevention.
-    * Status: Not yet implemented in the Go gateway code.
-    * Plan:
-        * Implement rate limiting middleware in the gateway server.
-        * Consider client identity for rate limits (wallet address, or API key if supported).
-        * Higher stakes by clients or providers could potentially grant higher rate limits.
-        * For abuse prevention, develop mechanisms to detect and block malicious patterns (e.g., overly complex queries, request spamming).
-        * Integrate with the on-chain slashing: if the gateway itself is a source of truth for some types of abuse by nodes, it needs a secure way to report this to the `ProviderRegistry` owner/DAO.
-  * [ ] Logging & billing integration.
-    * Status: Partially implemented.
+    * Implementation: The Go package `node/pkg/loadbalancer/` contains `loadbalancer.go`. The main gateway handler `handleRPCRequest` in `node/cmd/drpcd/main.go` uses this load balancer's `GetProvider()` method to select an upstream node.
+    * Logic: `LoadBalancer` fetches provider data (address, QoS score, stake). `GetProvider()` uses weighted random selection based on `QoSScore^2`.
+            * Current Status: The load balancer (`node/pkg/loadbalancer/`) fetches provider data (including endpoint URLs) via direct calls to the `ProviderRegistry` contract during its refresh cycle. The Go bindings are up-to-date. Event-based updates could be a future optimization.
+  * [x] Rate limiting, abuse prevention.
+    * Status: Basic implementation complete, refinements pending.
+    * Implementation:
+        * **Rate Limiting:** `checkRateLimit` function in `main.go` uses Redis (if `REDIS_ADDR` is set) with a fixed window counter (`ratelimit:<client_address>`) per authenticated client address (`X-DRPC-Signature`). Configurable via `rateLimitRequests` and `rateLimitDuration` constants.
+        * **Abuse Prevention:** Basic protection via client authentication (`verifyClientSignature`), request body size limits (`http.MaxBytesReader`), and timestamp validation in signatures. More sophisticated pattern detection is not implemented.
+    * Plan for Refinement:
+        * Consider implementing sliding window rate limiting in Redis (more complex) for better accuracy.
+        * Define and implement specific malicious pattern detection if needed (e.g., blocking overly complex `eth_call` requests).
+        * Implement higher rate limits based on client stake (requires adding stake checking logic, potentially complex).
+        * Clarify how gateway-detected abuse (if any specific types are defined) would trigger on-chain slashing.
+  * [x] Logging & billing integration.
+    * Status: Substantially implemented.
     * Logging:
-        * The `node/pkg/qos/monitor.go` (`QoSMonitor`) records performance metrics (response time, success) for each provider. This serves as a specialized log for QoS.
-        * General gateway logging (request details, errors, routing decisions) needs to be implemented in the main gateway application (`cmd/drpcd/`).
-    * Billing Integration:
-        * The metrics from `QoSMonitor` are essential for billing and reward distribution.
-        * If using `PaymentChannel.sol`: The gateway needs logic to facilitate the creation of signed payment messages for users to authorize payments to providers based on successful RPC servicing.
-        * For broader reward distribution (Phase 2 task): The gateway (or a component using `QoSMonitor` data) needs to aggregate usage data per provider to inform the reward calculation.
+        * The `node/pkg/qos/monitor.go` (`QoSMonitor`) records performance metrics.
+        * Enhanced structured logging implemented in `loggingMiddleware` in `cmd/drpcd/main.go` (includes method, URI, status, duration, etc.).
+    * Billing Integration (Usage Data for Rewards):
+        * The gateway (`cmd/drpcd/main.go`) now increments a usage counter in Redis (`usage:<provider_address>`) for each successful request handled by a provider (requires `REDIS_ADDR` env var).
+        * This provides the necessary data source for the off-chain process that calculates rewards and calls `calculateAndAllocateRewards`.
+        * Integration for `PaymentChannel.sol` (if used alongside or instead of the reward pool) remains less defined.
     * Plan:
-        * Implement standard logging in `cmd/drpcd/`.
-        * Design and implement the interaction flow for `PaymentChannel.sol` if it's to be directly managed or facilitated by the gateway.
-        * Develop a mechanism to securely report aggregated usage/QoS data to the smart contract layer for reward distribution (this could be via an admin call or a decentralized reporting system).
+        * Implement the external off-chain service/script to read Redis usage data, calculate rewards, and call `calculateAndAllocateRewards`.
+        * Clarify/implement gateway interaction for `PaymentChannel.sol` if needed.
   * [ ] Optionally verify response correctness.
     * Status: Not yet implemented. Design depends on the outcome of Phase 1 research: "Research decentralized verification options (light clients, zk-proofs, quorum)".
     * Plan:
@@ -140,13 +147,15 @@ A **decentralized and incentivized** version of this:
     * Status: Partially complete.
     * On-chain: `ProviderRegistry.sol` allows nodes to register by calling `register()` after staking.
     * Gateway: The `node/pkg/loadbalancer/loadbalancer.go` is designed to fetch and manage a list of registered providers. Its `updateProviders` method needs to be enhanced to fetch live data from the `ProviderRegistry` contract (e.g., by listening to events or querying state) instead of relying on test data.
-  * [ ] Ping/health check system.
-    * Status: Needs implementation in the gateway.
-    * Plan:
-        1. The gateway (likely in `cmd/drpcd/`) will need a component that periodically iterates through all known (and registered) providers from the `LoadBalancer`.
-        2. For each provider, it will send a standard RPC request (e.g., `eth_blockNumber` or `net_version`) to its advertised endpoint.
-        3. The success/failure and response time of this health check will be fed into `QoSMonitor.RecordMetric()`.
-        4. Providers failing health checks consistently could see their QoS scores drop significantly and might be temporarily removed from active load balancing rotation until they recover.
+  * [x] Ping/health check system.
+    * Status: Implemented.
+    * Implementation: The `startHealthChecker` function in `node/cmd/drpcd/main.go` runs periodically:
+        1. Fetches all providers from the `LoadBalancer`.
+        2. For each provider with an `EndpointURL`, calls `checkProviderHealth`.
+        3. `checkProviderHealth` sends an `eth_blockNumber` request to the provider's endpoint.
+        4. The success/failure and latency are recorded using `QoSMonitor.RecordMetric()`.
+        5. The `QoSMonitor` uses these metrics to calculate scores, which are periodically updated on-chain (using a configurable `CHAIN_ID`).
+    * Notes: Consistent failures will naturally lower the QoS score used for load balancing and potentially rewards.
   * [x] Track node performance & uptime.
     * Implementation: The `node/pkg/qos/monitor.go` (`QoSMonitor`) is responsible for this.
     * Performance: It records response times and success/failure for each request (or health check) to a provider. This data is used to calculate a `QoSScore`.
@@ -156,23 +165,25 @@ A **decentralized and incentivized** version of this:
 * [x] API for clients to connect (public RPC endpoint).
     * Implementation: The `node/cmd/drpcd/main.go` sets up an HTTP server with a `/` endpoint (`handleRPCRequest`) to receive JSON-RPC requests.
     * Current Status & Key Issues:
-        * **Proxying Logic:** Currently, `handleRPCRequest` proxies all requests to a single configured `EthRPCURL` (from `s.config.EthRPCURL`). It **does not** use the `s.loadBalancer.GetProvider()` to select a decentralized provider. This is a critical gap.
-        * **QoS Recording:** QoS metrics in `handleRPCRequest` are recorded against `req.Payment.From`, which is likely incorrect for general RPC calls. It should be the address of the chosen upstream provider from the load balancer.
-        * **Client Authentication:** General client authentication (e.g., wallet signature, API key) for accessing the RPC service is not yet implemented. The existing `validatePayment` is for a specific off-chain payment flow.
-        * **Rate Limiting:** Not yet implemented.
-        * **Payment Channel Interaction:** The `validatePayment` function in `main.go` seems to be an off-chain pre-validation for a payment scheme. How this integrates with the on-chain `PaymentChannel.sol` (e.g., for `closeChannel`) needs clarification and full implementation if the gateway is to facilitate this.
+        * **Proxying Logic:** The `handleRPCRequest` function *does* implement logic to use `s.loadBalancer.GetProvider()` to select a provider, proxy the request to the provider's `EndpointURL`, and record QoS metrics against the selected provider's address using `s.qosMonitor.RecordMetric()`. The previous assessment that it used a single hardcoded URL seems outdated based on the current `main.go` code. **However, this relies on the LoadBalancer providing correct endpoint URLs, which is likely the next integration point.**
+        * **Client Authentication:** Header-based client signature authentication (`verifyClientSignature`) and rate limiting (`checkRateLimit`) *are* implemented in `handleRPCRequest`.
+        * **Payment Channel Interaction:** The `validatePayment` function (using payment details embedded in the RPC request) still exists but its integration with the primary header-based auth and the on-chain `PaymentChannel.sol` needs clarification or removal if superseded.
+        * **Load Balancer Data:** The core issue likely lies in the `LoadBalancer` needing to fetch live provider data, *including endpoint URLs*, from the `ProviderRegistry` contract.
     * Positive Aspects:
         * Basic HTTP server structure is in place using `gorilla/mux`.
-        * Includes logging and CORS middleware.
-        * `/discovery` endpoint provides provider list and a recommended provider from the load balancer.
+        * Includes logging, CORS, client signature auth, and rate limiting middleware/checks.
+        * `/discovery` endpoint provides provider list (needs live data).
         * `/health` endpoint for gateway health.
+        * Separate `startHealthChecker` function and related code exists, addressing the "Ping/health check system" task partially.
     * Plan:
-        1.  **Crucial:** Modify `handleRPCRequest` to use `s.loadBalancer.GetProvider()` to select an upstream node.
-        2.  Proxy the request to the selected provider's endpoint (this endpoint URL needs to be part of the `Provider` data in `LoadBalancer`).
-        3.  Correctly call `s.qosMonitor.RecordMetric()` with the selected provider's address and the outcome of the proxied call.
-        4.  Implement client authentication mechanisms.
-        5.  Implement rate limiting.
-        6.  Clarify and fully implement the workflow for client payments, potentially integrating with `PaymentChannel.sol` more directly if the gateway is responsible for submitting `closeChannel` transactions or providing data for them.
+        1.  **(Done)** Enhance the `LoadBalancer` to fetch live provider data including `endpointURL` (Go bindings updated, fetch logic confirmed).
+        2.  **(Done)** Implement the Smart Contract reward distribution logic (Phase 2 - pull-based system added).
+        3.  **(Done)** Refine/complete the "Ping/health check system" integration.
+        4.  Clarify/Refactor the payment validation logic (`validatePayment` vs. header auth).
+        5.  Implement remaining Phase 3 tasks (Rate limiting / abuse prevention refinement, logging/billing integration refinement, optional verification).
+        6.  **(In Progress)** Implement the off-chain components for reward calculation/allocation (`rewardallocator` script created, needs refinement - see Phase 4 task).
+        7.  Implement remaining Phase 3 tasks (Abuse prevention details, optional verification).
+        8.  Proceed with other incomplete phases (Frontend, Testing, etc.).
 
 ---
 
@@ -188,57 +199,77 @@ A **decentralized and incentivized** version of this:
         * The on-chain `qosScore` serves as the public reputation metric.
 * [ ] Dashboard for monitoring node quality and ranking.
     * Status: Backend API is ready; frontend implementation is pending (part of Phase 5).
-    * Backend Support: The gateway (`node/cmd/drpcd/main.go`) exposes a `/discovery` HTTP endpoint.
-        * This endpoint returns a list of all active providers, including their addresses, on-chain QoS scores, and stake amounts.
-        * It also suggests a "recommended provider" based on the load balancer's logic.
+        * Backend Support: The gateway (`node/cmd/drpcd/main.go`) exposes a `/discovery` HTTP endpoint.
+            * This endpoint returns a list of all active providers, including their addresses, on-chain QoS scores, and stake amounts.
+            * It also suggests a "recommended provider" based on the load balancer's logic.
     * Frontend Plan: A UI component (e.g., in React) will fetch data from the `/discovery` endpoint and display it, allowing users to see node rankings, quality scores, and other relevant stats.
 * [ ] Integrate rewards based on score and usage.
-    * Status: Dependent on Phase 2 (Smart Contract for Reward Distribution) and Gateway enhancements.
+    * Status: On-chain component (allocation/claiming) implemented. Off-chain script for calculation/triggering created, needs refinement.
     * On-chain components:
-        * `ProviderRegistry.sol` stores `qosScore` (score component).
-        * The planned `distributeRewards` function (or similar in a rewards contract) will use `qosScore` and usage data (see Phase 2 task: "Reward distribution logic").
+        * `ProviderRegistry.sol` stores `qosScore` (score component) and `stake`.
+        * The `calculateAndAllocateRewards` function uses `stake * qosScore` for proportional allocation. Usage data is *not* directly used on-chain in this implementation, but the *selection* of providers and the *total reward amount* passed to the function can be based on off-chain usage data.
+        * Providers use `claimRewards()` to pull their allocated rewards.
     * Gateway components:
-        * `QoSMonitor` collects metrics that can be aggregated to determine "usage" (e.g., number of successful requests per provider).
-        * The gateway needs a mechanism to report this aggregated usage data to the smart contract layer (e.g., via a trusted admin call or a more decentralized reporting system).
+        * `QoSMonitor` collects metrics (`qosScore`) and could potentially aggregate usage counts.
+        * The gateway (or a separate backend service) needs a mechanism to:
+            1. Aggregate usage data per provider over a reward period (Data source: Redis counters incremented by the gateway, e.g., `usage:<provider_address>`).
+            2. Determine the list of eligible providers (`providersToReward`).
+            3. Calculate the `totalRewardAmount` for the period (based on usage, tokenomics, etc.).
+            4. Call the `calculateAndAllocateRewards` function on the `ProviderRegistry` contract with this data.
+    * Implementation (Off-chain):
+        * A Go script `node/cmd/rewardallocator/main.go` has been created.
+        * It connects to Redis and Ethereum, loads owner key, registry address etc. from env vars.
+        * Fetches provider usage from Redis keys (`usage:<provider_address>`).
+        * **Placeholder:** Uses a hardcoded provider list (needs replacement with event querying or other discovery method).
+        * Filters providers based on registration status and minimum usage (`MIN_USAGE_COUNT` env var).
+        * Calls `calculateAndAllocateRewards` with the eligible list and a total reward amount (`TOTAL_REWARD_AMOUNT` env var).
+        * Optionally resets Redis counters (`RESET_COUNTERS` env var).
     * Plan:
-        1. Finalize and implement the on-chain reward distribution logic (Phase 2).
-        2. Implement the off-chain aggregation of usage data in the gateway.
-        3. Implement the process for submitting this usage data to the smart contracts to trigger reward distribution according to the defined logic (which should factor in both usage and QoS score).
+        1. Implement robust provider discovery in `rewardallocator` (e.g., querying `ProviderRegistered` events).
+        2. Refine error handling and add scheduling (e.g., cron) for `rewardallocator`.
+        3. Enhance the UI to show available rewards and allow providers to trigger `claimRewards`.
 
 ---
 
 ### 🔹 Phase 5: Frontend (dApp + Dashboard)
 
-* [ ] Client Dashboard:
+* [x] Client Dashboard:
     * Implemented in `ui/src/App.tsx` with multiple tabs:
-        * "Dashboard" tab: Shows network status, selected provider stats (block, gas), and simulated payment channel/request count.
-        * "Providers" tab: Lists available providers from gateway's `/discovery` endpoint, shows QoS scores, stake, and allows selecting a provider for RPC requests. This covers "Dashboard for monitoring node quality and ranking" from Phase 4.
-        * "Payments" tab: UI for simulated payment channel opening, viewing details, and actions like (simulated) close/top-up.
-        * "Transactions" tab: UI for simulated transaction history.
+        * "Dashboard" tab: Shows network status (active providers), selected provider stats (block, gas, network via gateway RPC), and simulated payment channel/request count.
+        * "Providers" tab: Lists available providers from gateway's `/discovery` endpoint (address, QoS score, stake), allows selecting a provider.
+        * "Payments" tab: UI for *simulated* payment channel operations.
+        * "Transactions" tab: UI for *simulated* transaction history.
+    * Wallet Connection: Implemented via `window.ethereum` (MetaMask), displays connected account and network.
 
   * [ ] Register, manage API keys.
     * Status: Not implemented.
     * Plan: If API key authentication is supported by the gateway, UI components will be needed for clients to register for an API key, view it, and perhaps revoke/regenerate it.
 
   * [ ] View usage stats, top-up credits.
-    * Status: Partially implemented (simulated).
-    * Usage Stats: "Transactions" tab is currently simulated. Real client-side usage tracking or stats from the gateway would be needed.
-    * Top-up Credits: "Payments" tab has UI for simulated payment channel balance and top-up. This needs to be integrated with on-chain `PaymentChannel.sol` deposits or a central credit contract. The `openPaymentChannel` and `closePaymentChannel` functions in `App.tsx` are currently frontend-only simulations.
+    * Status: Partially implemented (simulated for payments/transactions).
+    * Usage Stats: "Transactions" tab is currently simulated.
+    * Top-up Credits: "Payments" tab is simulated. Real integration with `PaymentChannel.sol` or a credit system would be needed.
 
-* [ ] Node Operator Dashboard:
+* [x] Node Operator Dashboard:
+  * Implemented in `ui/src/App.tsx` under "Operator Zone" tab (requires wallet connection):
+    * Displays operator's data from `ProviderRegistry` (stake, QoS, registration status, endpoint URL, registration/deregistration times).
+    * Displays claimable rewards from `ProviderRegistry` and allows claiming.
+    * Allows depositing STK tokens (approve + depositStake).
+    * Allows setting/updating their endpoint URL.
+    * Allows registering and deregistering the node.
+    * Allows withdrawing stake (after deregistration and cooldown - cooldown logic not fully enforced by UI yet, relies on contract).
+    * Uses `ethers.js` for all contract interactions.
+    * Basic transaction status reporting (processing, success, error).
 
   * [ ] Register node, stake tokens.
-    * Status: Not implemented.
-    * Plan: Create new UI views/components for node operators.
-        * Allow connecting a wallet.
-        * Interface for calling `depositStake()` and `register()` on `ProviderRegistry.sol` via `ethers.js` or similar.
-        * Display current stake, registration status.
+    * Status: Implemented as part of Node Operator Dashboard.
 
   * [ ] Monitor performance, earnings.
-    * Status: Not implemented.
+    * Status: Partially implemented.
+    * Performance: QoS score is displayed. More detailed historical metrics are not yet shown.
+    * Earnings: Claimable rewards from the `ProviderRegistry` reward pool are displayed and can be claimed. Direct payment channel earnings are not tracked on this dashboard.
     * Plan:
-        * Performance: UI to show a node operator their own node's detailed historical QoS metrics (beyond just the current score), health check status, etc. This might require new gateway endpoints for more detailed historical data.
-        * Earnings: UI to display earnings from direct payments (e.g., `PaymentChannel` settlements) and from any distributed token rewards. This requires the reward system (Phase 2 & 4) to be functional.
+        * Consider UI for more detailed historical QoS or gateway-reported stats (might need new gateway endpoints).
 
 * [ ] Admin panel (optional, for early manual control).
     * Status: Not implemented.
